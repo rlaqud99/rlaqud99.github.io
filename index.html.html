@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사회복지행정론 | 연성대학교 사회복지경영과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE8DE;
+    --ink:#22262B;
+    --navy:#26364F;
+    --navy-deep:#182437;
+    --seal:#A8472B;
+    --seal-soft:#C97A5C;
+    --gold:#B7923F;
+    --line:#c9c2b0;
+    --card:#F6F3EA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    line-height:1.7;
+    font-weight:400;
+  }
+  h1,h2,h3,.serif{ font-family:'Noto Serif KR', serif; }
+  a{ color:inherit; }
+
+  /* ===== 상단 결재선 스타일 헤더 ===== */
+  .doc-top{
+    background:var(--navy-deep);
+    color:#EDE7D8;
+    padding:14px 6vw;
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:0.78rem; letter-spacing:0.04em;
+    border-bottom:3px double var(--gold);
+  }
+  .doc-top span{opacity:0.8;}
+
+  header.hero{
+    position:relative;
+    padding:64px 6vw 56px;
+    background:
+      radial-gradient(circle at 88% 18%, rgba(183,146,63,0.16), transparent 45%),
+      var(--navy-deep);
+    color:#F3EFE3;
+    overflow:hidden;
+  }
+  header.hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(237,231,216,0.045) 0 1px, transparent 1px 26px);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-size:0.82rem; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--seal-soft); font-weight:600; margin-bottom:18px;
+  }
+  header.hero h1{
+    font-size:clamp(2.1rem, 4.6vw, 3.4rem);
+    font-weight:900;
+    line-height:1.28;
+    max-width:14ch;
+  }
+  header.hero .sub{
+    margin-top:18px; font-size:1.02rem; color:#C9C2AE; max-width:44ch;
+  }
+  .hero-meta{
+    margin-top:40px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:0; border-top:1px solid rgba(237,231,216,0.22);
+  }
+  .hero-meta div{
+    padding:16px 20px 4px 0; border-right:1px solid rgba(237,231,216,0.15);
+  }
+  .hero-meta div:last-child{border-right:none;}
+  .hero-meta .label{ font-size:0.7rem; letter-spacing:0.1em; color:#9C947C; text-transform:uppercase; margin-bottom:6px;}
+  .hero-meta .val{ font-size:1.02rem; font-weight:500; color:#F3EFE3;}
+
+  /* ===== 관인/도장 시그니처 ===== */
+  .seal-mark{
+    position:absolute; top:52px; right:6vw;
+    width:96px; height:96px; border-radius:50%;
+    border:2.5px solid var(--seal);
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(-9deg);
+    color:var(--seal-soft);
+    font-family:'Noto Serif KR',serif; font-weight:700; font-size:0.72rem;
+    text-align:center; line-height:1.35; letter-spacing:0.04em;
+    opacity:0.85;
+  }
+
+  nav.tabs{
+    position:sticky; top:0; z-index:40;
+    background:var(--card);
+    border-bottom:1px solid var(--line);
+    display:flex; gap:2px; padding:0 6vw; overflow-x:auto;
+  }
+  nav.tabs button{
+    background:none; border:none; cursor:pointer;
+    font-family:'Noto Sans KR',sans-serif; font-size:0.92rem; font-weight:500;
+    color:#6b6656; padding:16px 18px; white-space:nowrap;
+    border-bottom:3px solid transparent;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  nav.tabs button:hover{ color:var(--navy); }
+  nav.tabs button.active{ color:var(--seal); border-bottom-color:var(--seal); font-weight:700;}
+
+  main{ max-width:980px; margin:0 auto; padding:0 6vw; }
+  section{ padding:64px 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+  .sec-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:34px; }
+  .sec-num{ font-family:'Noto Serif KR',serif; color:var(--seal); font-weight:700; font-size:0.95rem; }
+  .sec-head h2{ font-size:1.7rem; font-weight:700; color:var(--navy-deep); }
+  .sec-desc{ color:#5b5646; font-size:0.94rem; margin:-20px 0 30px; max-width:60ch;}
+
+  /* 개요 카드 */
+  .overview-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:28px; }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:4px; padding:26px 28px;
+  }
+  .card h3{ font-size:1rem; color:var(--navy); margin-bottom:12px; font-weight:700;}
+  .card p{ font-size:0.92rem; color:#463f31; }
+  .contact-list{ list-style:none; margin-top:14px; }
+  .contact-list li{
+    display:flex; justify-content:space-between; padding:10px 0; border-top:1px dashed var(--line);
+    font-size:0.9rem;
+  }
+  .contact-list li:first-child{border-top:none;}
+  .contact-list .k{ color:#8a8368; }
+  .contact-list .v{ font-weight:600; color:var(--ink); }
+
+  /* 평가 비중 */
+  .grade-bars{ display:flex; flex-direction:column; gap:14px; margin-top:6px;}
+  .grade-row{ display:grid; grid-template-columns:110px 1fr 50px; align-items:center; gap:14px; font-size:0.88rem;}
+  .grade-track{ background:#DFD9C8; height:10px; border-radius:6px; overflow:hidden; }
+  .grade-fill{ height:100%; background:linear-gradient(90deg, var(--seal), var(--gold)); }
+
+  /* 주차별 커리큘럼 - 결재문서형 리스트 */
+  .week-list{ display:flex; flex-direction:column; }
+  .week{
+    display:grid; grid-template-columns:76px 1fr auto; gap:22px; align-items:center;
+    padding:18px 0; border-top:1px solid var(--line);
+  }
+  .week:last-child{ border-bottom:1px solid var(--line); }
+  .week-no{
+    font-family:'Noto Serif KR',serif; font-weight:900; font-size:1.5rem; color:var(--line);
+    transition:color .15s ease;
+  }
+  .week:hover .week-no{ color:var(--seal-soft); }
+  .week-title{ font-size:1rem; font-weight:600; color:var(--ink); }
+  .week-title .tag{
+    display:inline-block; font-size:0.68rem; font-weight:700; letter-spacing:0.05em;
+    color:#8a8368; border:1px solid var(--line); border-radius:20px; padding:2px 10px; margin-right:10px;
+    vertical-align:middle;
+  }
+  .week.exam .week-title .tag{ color:#fff; background:var(--seal); border-color:var(--seal); }
+  .week-sub{ font-size:0.82rem; color:#8a8368; margin-top:4px;}
+
+  /* 공지/과제 */
+  .notice-toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .btn{
+    background:var(--navy-deep); color:#F3EFE3; border:none; border-radius:4px;
+    padding:10px 18px; font-size:0.85rem; font-weight:600; cursor:pointer;
+  }
+  .notice-item{
+    display:flex; gap:16px; padding:18px 20px; background:var(--card); border:1px solid var(--line);
+    border-radius:4px; margin-bottom:10px; align-items:flex-start;
+  }
+  .notice-badge{
+    font-size:0.7rem; font-weight:700; padding:3px 9px; border-radius:3px; white-space:nowrap; margin-top:2px;
+  }
+  .notice-badge.notice{ background:var(--navy); color:#F3EFE3;}
+  .notice-badge.task{ background:var(--seal); color:#fff;}
+  .notice-body .title{ font-weight:600; font-size:0.95rem; }
+  .notice-body .meta{ font-size:0.78rem; color:#8a8368; margin-top:4px;}
+  .empty-hint{ font-size:0.85rem; color:#8a8368; margin-top:14px; border-top:1px dashed var(--line); padding-top:14px;}
+
+  /* 자료실 */
+  .material-table{ width:100%; border-collapse:collapse; font-size:0.9rem; }
+  .material-table th{
+    text-align:left; font-size:0.75rem; letter-spacing:0.06em; text-transform:uppercase;
+    color:#8a8368; padding-bottom:12px; border-bottom:2px solid var(--navy-deep); font-weight:700;
+  }
+  .material-table td{ padding:14px 8px; border-bottom:1px solid var(--line); }
+  .material-table tr td:first-child{ font-weight:600; }
+  .dl{ color:var(--seal); font-weight:700; font-size:0.82rem; text-decoration:none; }
+  .placeholder-row td{ color:#a29c86; font-style:italic; }
+
+  footer{
+    background:var(--navy-deep); color:#9C947C; text-align:center;
+    padding:36px 6vw; font-size:0.8rem;
+  }
+  footer strong{ color:#F3EFE3; }
+
+  @media (max-width:720px){
+    .overview-grid{ grid-template-columns:1fr; }
+    .seal-mark{ display:none; }
+    .week{ grid-template-columns:44px 1fr; }
+    .week > .week-sub-time{ display:none; }
+  }
+
+  [data-reveal]{ opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease; }
+  [data-reveal].in{ opacity:1; transform:none; }
+</style>
+</head>
+<body>
+
+<div class="doc-top">
+  <span>연성대학교 · 사회복지경영과</span>
+  <span>2026학년도 2학기 강의계획서</span>
+</div>
+
+<header class="hero">
+  <div class="seal-mark">사회<br>복지<br>행정<br>론</div>
+  <div class="eyebrow">2026-2 · Course Documentation</div>
+  <h1>사회복지행정론</h1>
+  <p class="sub">사회복지조직을 움직이는 원리 — 기획, 인사, 재정, 마케팅, 프로그램 평가에 이르는 행정의 전 과정을 다룹니다.</p>
+  <div class="hero-meta">
+    <div><div class="label">담당교수</div><div class="val">김병년 교수</div></div>
+    <div><div class="label">강의실</div><div class="val">연곡문화센터 408호</div></div>
+    <div><div class="label">학기</div><div class="val">2026학년도 2학기</div></div>
+    <div><div class="label">이메일</div><div class="val" style="font-size:0.92rem;">rlaqud99@gmail.com</div></div>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="active" data-target="overview">강의 개요</button>
+  <button data-target="curriculum">주차별 계획</button>
+  <button data-target="grading">평가 방식</button>
+  <button data-target="notice">공지·과제</button>
+  <button data-target="materials">강의자료실</button>
+</nav>
+
+<main>
+
+  <section id="overview" data-reveal>
+    <div class="sec-head"><span class="sec-num">01</span><h2>강의 개요</h2></div>
+    <div class="overview-grid">
+      <div class="card">
+        <h3>강의 소개</h3>
+        <p>
+          사회복지행정론은 사회복지조직이 목표를 달성하기 위해 인적·물적 자원을 어떻게 확보하고 운용하는지를 다루는 과목입니다.
+          조직이론과 리더십 같은 이론적 기초부터 인사·재정·마케팅·프로그램 평가 등 실무 영역까지 순차적으로 학습하며,
+          현장에서 요구되는 행정 역량의 기본기를 다지는 것을 목표로 합니다.
+        </p>
+      </div>
+      <div class="card">
+        <h3>담당교수 연락처</h3>
+        <ul class="contact-list">
+          <li><span class="k">교수명</span><span class="v">김병년</span></li>
+          <li><span class="k">소속</span><span class="v">연성대학교 사회복지경영과</span></li>
+          <li><span class="k">이메일</span><span class="v">rlaqud99@gmail.com</span></li>
+          <li><span class="k">강의실</span><span class="v">연곡문화센터 408호</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="curriculum" data-reveal>
+    <div class="sec-head"><span class="sec-num">02</span><h2>주차별 강의계획</h2></div>
+    <p class="sec-desc">총 15주 과정으로, 8주차와 15주차에 각각 중간·기말고사가 배치되어 있습니다.</p>
+    <div class="week-list" id="weekList"></div>
+  </section>
+
+  <section id="grading" data-reveal>
+    <div class="sec-head"><span class="sec-num">03</span><h2>평가 방식</h2></div>
+    <div class="card">
+      <div class="grade-bars">
+        <div class="grade-row"><span>출석</span><div class="grade-track"><div class="grade-fill" style="width:20%"></div></div><span>20%</span></div>
+        <div class="grade-row"><span>과제</span><div class="grade-track"><div class="grade-fill" style="width:10%"></div></div><span>10%</span></div>
+        <div class="grade-row"><span>시험</span><div class="grade-track"><div class="grade-fill" style="width:60%"></div></div><span>60%</span></div>
+        <div class="grade-row"><span>발표·태도</span><div class="grade-track"><div class="grade-fill" style="width:10%"></div></div><span>10%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="notice" data-reveal>
+    <div class="sec-head"><span class="sec-num">04</span><h2>공지사항 · 과제</h2></div>
+    <div class="notice-toolbar">
+      <p class="sec-desc" style="margin:0;">학기 중 게시되는 공지사항과 과제 안내가 이곳에 순서대로 쌓입니다.</p>
+    </div>
+    <div id="noticeArea">
+      <p class="empty-hint">아직 등록된 공지·과제가 없습니다. 학기 시작 후 이 영역에 하나씩 추가될 예정입니다.</p>
+    </div>
+  </section>
+
+  <section id="materials" data-reveal>
+    <div class="sec-head"><span class="sec-num">05</span><h2>강의자료실</h2></div>
+    <p class="sec-desc">주차별 PPT·PDF 자료가 업로드되면 아래 목록에서 바로 내려받을 수 있습니다.</p>
+    <table class="material-table">
+      <thead>
+        <tr><th>주차</th><th>자료명</th><th>형식</th><th>다운로드</th></tr>
+      </thead>
+      <tbody>
+        <tr class="placeholder-row"><td colspan="4">등록된 자료가 아직 없습니다. 자료 업로드 후 이 표에 추가됩니다.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  <strong>사회복지행정론</strong> · 연성대학교 사회복지경영과 · 담당교수 김병년<br>
+  본 페이지는 강의 진행에 따라 지속적으로 업데이트됩니다.
+</footer>
+
+<script>
+  const weeks = [
+    {no:1, title:"오리엔테이션", sub:"강의 소개 및 학습 방향 안내"},
+    {no:2, title:"사회복지행정의 개념", sub:"행정의 정의와 기본 특성"},
+    {no:3, title:"사회복지행정의 역사", sub:"미국과 한국을 중심으로"},
+    {no:4, title:"사회복지서비스 전달체계", sub:"전달체계의 구조와 원칙"},
+    {no:5, title:"조직이론", sub:"고전·인간관계·체계 이론"},
+    {no:6, title:"사회복지조직의 기획과 의사결정", sub:"기획 과정과 의사결정 모형"},
+    {no:7, title:"사회복지조직관리", sub:"조직관리의 원리와 실제"},
+    {no:8, title:"중간고사", sub:"", exam:true},
+    {no:9, title:"리더십 이론", sub:"특성·행동·상황적합 이론"},
+    {no:10, title:"인적자원관리", sub:"채용·평가·교육훈련"},
+    {no:11, title:"사회복지재정관리", sub:"예산 편성과 재무 운영"},
+    {no:12, title:"사회복지 마케팅 관리", sub:"마케팅 개념과 전략 수립"},
+    {no:13, title:"프로그램 개발과 평가", sub:"프로그램 기획부터 평가까지"},
+    {no:14, title:"프로그램 정보관리", sub:"정보관리시스템의 이해"},
+    {no:15, title:"기말고사", sub:"", exam:true},
+  ];
+
+  const listEl = document.getElementById('weekList');
+  listEl.innerHTML = weeks.map(w => `
+    <div class="week ${w.exam ? 'exam' : ''}">
+      <div class="week-no">${String(w.no).padStart(2,'0')}</div>
+      <div>
+        <div class="week-title">
+          <span class="tag">${w.exam ? '시험' : '주차'}</span>${w.title}
+        </div>
+        ${w.sub ? `<div class="week-sub">${w.sub}</div>` : ''}
+      </div>
+      <div class="week-sub-time"></div>
+    </div>
+  `).join('');
+
+  // 탭 전환 (스크롤 이동 + 활성 표시)
+  const tabButtons = document.querySelectorAll('.tabs button');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById(btn.dataset.target).scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+  const sections = document.querySelectorAll('main section');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        tabButtons.forEach(b => b.classList.toggle('active', b.dataset.target === e.target.id));
+      }
+    });
+  }, {rootMargin:"-40% 0px -50% 0px"});
+  sections.forEach(s => io.observe(s));
+
+  // 등장 애니메이션
+  const revealIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+  }, {threshold:0.08});
+  document.querySelectorAll('[data-reveal]').forEach(el => revealIO.observe(el));
+</script>
+
+</body>
+</html>
