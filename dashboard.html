@@ -121,9 +121,43 @@
     padding:8px 12px; display:flex; gap:6px; align-items:center; border:1px solid var(--line);
   }
   .guard b{color:var(--seal);}
+
+  /* 접속 코드 잠금 화면 */
+  #lockScreen{
+    position:fixed; inset:0; background:var(--navy-deep); z-index:2000;
+    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px;
+  }
+  #lockScreen .box{
+    background:var(--card); border-radius:14px; padding:36px 40px; width:320px; max-width:86vw;
+    box-shadow:var(--shadow); text-align:center;
+  }
+  #lockScreen h2{ font-family:'Noto Serif KR',serif; color:var(--navy-deep); font-size:1.15rem; margin:0 0 6px; }
+  #lockScreen p{ color:#6b6656; font-size:.8rem; margin:0 0 18px; }
+  #lockScreen input{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:1.1rem;
+    text-align:center; letter-spacing:.3em; margin-bottom:12px;
+  }
+  #lockScreen button{
+    width:100%; border:none; border-radius:8px; padding:10px; font-size:.9rem; font-weight:700;
+    background:var(--seal); color:#fff; cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+  }
+  #lockScreen button:hover{ background:var(--seal-soft); }
+  #lockScreen .err{ color:#fff; background:var(--seal); border-radius:6px; padding:6px 10px; font-size:.78rem; margin-top:10px; display:none; }
+  #lockScreen .err.show{ display:block; }
+  body.locked > *:not(#lockScreen){ display:none !important; }
 </style>
 </head>
-<body>
+<body class="locked">
+
+<div id="lockScreen">
+  <div class="box">
+    <h2>🔒 교수 전용 페이지</h2>
+    <p>접속 코드를 입력하세요</p>
+    <input type="password" id="lockInput" maxlength="12" inputmode="numeric" placeholder="••••">
+    <button id="lockBtn">확인</button>
+    <div class="err" id="lockErr">코드가 올바르지 않습니다</div>
+  </div>
+</div>
 
 <div class="doc-top"><span>연성대학교 · 사회복지경영과</span><span>교수 전용 · 비공개 경로</span></div>
 
@@ -206,6 +240,22 @@
 <div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">되돌리기</button></div>
 
 <script>
+/* ---------- 접속 코드 잠금 (참고: 소스에 노출되므로 완전한 보안은 아님, 우연한 접근만 방지) ---------- */
+const ACCESS_CODE = '0000';
+function tryUnlock(){
+  const val = document.getElementById('lockInput').value;
+  if(val === ACCESS_CODE){
+    document.body.classList.remove('locked');
+    document.getElementById('lockScreen').remove();
+  } else {
+    document.getElementById('lockErr').classList.add('show');
+    document.getElementById('lockInput').value = '';
+    document.getElementById('lockInput').focus();
+  }
+}
+document.getElementById('lockBtn').addEventListener('click', tryUnlock);
+document.getElementById('lockInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') tryUnlock(); });
+
 /* ---------- 학생 목록 ---------- */
 const STUDENTS = Array.from({length:12}, (_,i)=>'A'+String(i+1).padStart(2,'0'));
 const TOTAL_WEEKS = 15;
