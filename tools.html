@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수업 도구 · 사회복지행정론</title>
+<style>
+  :root{
+    --bg:#FBF7F2; --card:#FFFFFF; --ink:#2F2A26; --muted:#7A6E64;
+    --line:#EAE0D5; --accent:#C2703D; --accent-soft:#F6E9DE;
+    --green:#5C8A63; --red:#C24A3D; --yellow:#D8A13A;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    display:flex;flex-direction:column;align-items:center;min-height:100vh}
+  header{width:100%;padding:20px 24px 0;text-align:center}
+  header h1{font-size:1.4rem;margin:0 0 2px;letter-spacing:-.02em}
+  header p{margin:0;color:var(--muted);font-size:.88rem}
+
+  nav{display:flex;gap:6px;margin:20px auto 8px;background:#F1E7DB;padding:6px;border-radius:16px;
+    flex-wrap:wrap;justify-content:center;max-width:760px}
+  nav button{border:none;background:transparent;padding:10px 18px;border-radius:12px;
+    font-size:.98rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap}
+  nav button.active{background:#fff;color:var(--accent);box-shadow:0 2px 10px rgba(90,70,55,.10)}
+
+  main{width:100%;max-width:760px;flex:1;padding:16px 20px 60px;display:flex;flex-direction:column;align-items:center}
+  .panel{display:none;width:100%;flex-direction:column;align-items:center}
+  .panel.active{display:flex}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:22px;
+    padding:36px;width:100%;box-shadow:0 10px 30px rgba(90,70,55,.06)}
+
+  /* ── 뽑기 ── */
+  .stage{width:100%;min-height:240px;border-radius:24px;
+    background:radial-gradient(circle at 50% 30%, #FDE9CE 0%, #F6E9DE 55%, #F0DFCF 100%);
+    display:flex;align-items:center;justify-content:center;margin-bottom:22px;position:relative;
+    overflow:hidden;border:3px solid #fff;box-shadow:inset 0 0 0 2px var(--accent-soft), 0 12px 28px rgba(150,100,60,.18)}
+  .stage::before{content:"";position:absolute;inset:0;
+    background:repeating-conic-gradient(from 0deg, rgba(194,112,61,.05) 0deg 8deg, transparent 8deg 16deg);
+    animation:spinbg 18s linear infinite}
+  @keyframes spinbg{to{transform:rotate(360deg)}}
+  .stage .name{font-size:3.4rem;font-weight:800;color:var(--accent);letter-spacing:-.02em;
+    position:relative;z-index:1;padding:10px 26px;transition:transform .05s}
+  .stage .name.spinning{animation:jitter .09s linear infinite}
+  .stage .name.winner{animation:winnerPop .55s cubic-bezier(.34,1.56,.64,1);
+    background:#fff;border-radius:20px;box-shadow:0 10px 24px rgba(194,112,61,.25)}
+  @keyframes jitter{
+    0%{transform:translateY(0) scale(1)}
+    50%{transform:translateY(-4px) scale(1.03)}
+    100%{transform:translateY(0) scale(1)}
+  }
+  @keyframes winnerPop{
+    0%{transform:scale(.3) rotate(-8deg);opacity:0}
+    60%{transform:scale(1.18) rotate(3deg);opacity:1}
+    100%{transform:scale(1) rotate(0)}
+  }
+  .stage .empty{color:var(--muted);font-size:1.1rem;position:relative;z-index:1}
+  .confetti{position:absolute;top:-10px;border-radius:2px;pointer-events:none;z-index:2}
+  .stage .medal{position:relative;z-index:1;font-size:2.6rem;display:block;text-align:center;
+    margin-bottom:6px;animation:winnerPop .6s cubic-bezier(.34,1.56,.64,1)}
+  #btnPick.spinning{opacity:.7;cursor:not-allowed}
+  #btnPick{position:relative;overflow:hidden}
+  .row{display:flex;gap:10px;width:100%;flex-wrap:wrap;justify-content:center}
+  textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;font-size:1rem;font-family:inherit;resize:vertical;background:#FCFAF7}
+  .btn{border:none;border-radius:14px;padding:16px 28px;font-size:1.1rem;font-weight:700;
+    cursor:pointer;font-family:inherit;transition:transform .05s}
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .pool-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;width:100%}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:.88rem}
+  .chip.used{opacity:.4;text-decoration:line-through}
+  .hint{color:var(--muted);font-size:.85rem;margin:10px 0 18px}
+
+  /* ── 퀴즈 ── */
+  .quiz-setup{width:100%;display:flex;flex-direction:column;gap:10px}
+  .quiz-setup input, .quiz-setup textarea{border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;font-size:1rem;font-family:inherit;background:#FCFAF7}
+  .choice-row{display:flex;gap:8px;align-items:center}
+  .choice-row span{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);
+    color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex:none}
+  .choice-row input{flex:1}
+  .quiz-live{width:100%;text-align:center}
+  .quiz-q{font-size:1.6rem;font-weight:800;margin-bottom:24px;line-height:1.4}
+  .quiz-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}
+  .quiz-choices .opt{background:#fff;border:2px solid var(--line);border-radius:16px;
+    padding:22px 16px;font-size:1.15rem;font-weight:600;cursor:pointer;text-align:left;
+    display:flex;gap:12px;align-items:center;position:relative;overflow:hidden}
+  .quiz-choices .opt .num{width:32px;height:32px;border-radius:50%;background:var(--accent-soft);
+    color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
+  .quiz-choices .opt .txt{flex:1;line-height:1.4}
+  .quiz-choices .opt{transition:transform .15s, box-shadow .15s}
+  .quiz-choices .opt.correct{border-color:var(--green);background:#EFF5EF;
+    animation:correctPop .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 20px rgba(92,138,99,.25)}
+  .quiz-choices .opt.correct .num::after{content:"✓";margin-left:2px}
+  .quiz-choices .opt.wrong{border-color:var(--red);background:#F8EDEB;opacity:.55;
+    animation:wrongShake .4s}
+  @keyframes correctPop{
+    0%{transform:scale(1)} 40%{transform:scale(1.06)} 100%{transform:scale(1)}
+  }
+  @keyframes wrongShake{
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+  }
+  .quiz-q.countdown{color:var(--accent)}
+  .quiz-timer-mini{font-size:1.05rem;font-weight:800;color:var(--muted);margin-bottom:10px}
+  .quiz-timer-mini.warn{color:var(--red)}
+
+  /* ── 타이머 ── */
+  .timer-tabs{display:flex;gap:8px;margin-bottom:22px}
+  .timer-tabs button{border:1px solid var(--line);background:#fff;border-radius:99px;
+    padding:8px 18px;font-size:.92rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
+  .timer-tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .timer-display{font-size:5.2rem;font-weight:800;letter-spacing:-.02em;margin:10px 0 6px;
+    font-variant-numeric:tabular-nums;transition:color .3s, transform .3s}
+  .timer-display.warn{color:var(--yellow);animation:pulse 1s ease-in-out infinite}
+  .timer-display.danger{color:var(--red);animation:pulseStrong .6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.04)}}
+  @keyframes pulseStrong{0%,100%{transform:scale(1)} 50%{transform:scale(1.08)}}
+  .timer-card{transition:background .4s}
+  .timer-card.warn{background:#FFF7E8}
+  .timer-card.danger{background:#FDEDEA}
+  .presets{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+  .preset-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 18px;
+    font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .preset-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .timer-status{font-size:1rem;color:var(--muted);margin-bottom:18px;height:1.4em}
+  .timer-status.warn{color:var(--yellow);font-weight:700}
+  .timer-status.danger{color:var(--red);font-weight:700}
+
+  /* ── 버저 ── */
+  .buzzer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;position:relative}
+  .buzzer-btn{position:relative;background:#fff;border:2px solid var(--line);border-radius:18px;
+    padding:26px 12px;font-size:1.15rem;font-weight:800;cursor:pointer;font-family:inherit;
+    color:var(--ink);transition:transform .06s}
+  .buzzer-btn:active{transform:scale(.95)}
+  .buzzer-btn.pressed{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);
+    animation:buzzPop .4s cubic-bezier(.34,1.56,.64,1)}
+  .buzzer-btn.rank-1{border-color:#D8A13A;background:#FEF6E4;color:#9C6B10;box-shadow:0 8px 20px rgba(216,161,58,.3)}
+  .buzzer-btn.rank-2{border-color:#B7C0C8;background:#F3F5F6;color:#5A6670}
+  .buzzer-btn.rank-3{border-color:#C99368;background:#FBF1E8;color:#8A5A34}
+  .buzzer-btn .order{display:block;font-size:2rem;margin-bottom:6px}
+  .buzzer-btn.disabled-others{opacity:.45;cursor:default}
+  @keyframes buzzPop{
+    0%{transform:scale(1)} 35%{transform:scale(1.12) rotate(-2deg)} 100%{transform:scale(1) rotate(0)}
+  }
+
+  /* ── 감정체크 ── */
+  .mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:10px 0 26px}
+  .mood-btn{background:#fff;border:2px solid var(--line);border-radius:16px;padding:18px 6px;
+    cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .mood-btn .emo{font-size:2.2rem}
+  .mood-btn .lbl{font-size:.82rem;color:var(--muted);font-weight:700}
+  .mood-btn:active{transform:scale(.95)}
+  .mood-btn.bump{animation:moodBump .35s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes moodBump{0%{transform:scale(1)} 45%{transform:scale(1.15) rotate(-4deg)} 100%{transform:scale(1)}}
+  .mood-bars{display:flex;flex-direction:column;gap:10px;text-align:left}
+  .mood-bar-row{display:flex;align-items:center;gap:10px}
+  .mood-bar-row .emo{font-size:1.3rem;width:28px;position:relative}
+  .mood-bar-row.leading .emo::after{content:"👑";position:absolute;top:-14px;left:2px;font-size:.9rem}
+  .mood-bar-track{flex:1;background:var(--accent-soft);border-radius:99px;height:16px;overflow:hidden}
+  .mood-bar-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .3s;min-width:2px}
+  .mood-bar-row.leading .mood-bar-fill{background:linear-gradient(90deg, var(--accent), #E0935E)}
+  .mood-bar-row .cnt{width:28px;text-align:right;font-weight:700;color:var(--muted);font-size:.9rem}
+
+  /* ── 점수판 ── */
+  .score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .score-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center;
+    position:relative;transition:transform .2s, box-shadow .2s}
+  .score-card.leading{border-color:#D8A13A;box-shadow:0 10px 24px rgba(216,161,58,.22);transform:translateY(-3px)}
+  .score-card.leading::before{content:"👑";position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:1.4rem}
+  .score-card .tname{font-weight:700;margin-bottom:8px;font-size:1rem}
+  .score-card .tscore{font-size:2.6rem;font-weight:800;color:var(--accent);margin-bottom:10px;
+    font-variant-numeric:tabular-nums;transition:transform .25s}
+  .score-card .tscore.bump{animation:scoreBump .3s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes scoreBump{0%{transform:scale(1)} 50%{transform:scale(1.25)} 100%{transform:scale(1)}}
+  .score-card .srow{display:flex;gap:8px;justify-content:center}
+  .score-card button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);
+    background:#FCFAF7;font-size:1.2rem;font-weight:800;cursor:pointer;font-family:inherit}
+  .score-card button:active{transform:scale(.9)}
+  .score-card button.plus{color:var(--green);border-color:var(--green)}
+  .score-card button.minus{color:var(--red);border-color:var(--red)}
+
+  footer{padding:20px;color:var(--muted);font-size:.8rem;text-align:center}
+  @media(max-width:520px){
+    .quiz-choices{grid-template-columns:1fr}
+    .timer-display{font-size:3.6rem}
+    .stage .name{font-size:2.2rem}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" style="display:inline-block;margin-bottom:10px;color:var(--muted);
+    text-decoration:none;font-size:.85rem;font-weight:700">← 강의 페이지로 돌아가기</a>
+  <h1>수업 도구</h1>
+  <p>사회복지행정론 · 뽑기 · 퀴즈 · 타이머 · 버저 · 감정체크 · 점수판</p>
+</header>
+
+<nav>
+  <button class="tab-btn active" data-tab="pick">🎯 뽑기</button>
+  <button class="tab-btn" data-tab="quiz">❓ 퀴즈</button>
+  <button class="tab-btn" data-tab="timer">⏱ 타이머</button>
+  <button class="tab-btn" data-tab="buzzer">🔔 버저</button>
+  <button class="tab-btn" data-tab="mood">😊 감정체크</button>
+  <button class="tab-btn" data-tab="score">🏆 점수판</button>
+</nav>
+
+<main>
+
+  <!-- ───────── 뽑기 ───────── -->
+  <section class="panel active" id="panel-pick">
+    <div class="card">
+      <div class="stage" id="stageBox"><div id="pickResult" class="empty">명단을 입력하고 뽑기를 눌러주세요</div></div>
+      <div class="row" style="margin-bottom:16px">
+        <button class="btn btn-primary" id="btnPick">🎲 룰렛 돌리기</button>
+        <button class="btn btn-ghost" id="btnResetPick">전체 초기화</button>
+      </div>
+      <textarea id="nameInput" placeholder="한 줄에 한 명씩 입력하세요&#10;예)&#10;김민지&#10;박서준&#10;이하은">김민지
+박서준
+이하은
+최지우
+정도윤
+한서연
+윤지호
+강나연</textarea>
+      <p class="hint">뽑힌 이름은 자동으로 제외됩니다. 전체를 다시 뽑으려면 "전체 초기화"를 누르세요.</p>
+      <div class="pool-list" id="poolList"></div>
+    </div>
+  </section>
+
+  <!-- ───────── 퀴즈 ───────── -->
+  <section class="panel" id="panel-quiz">
+    <div class="card">
+      <div id="quizSetup" class="quiz-setup">
+        <input id="qText" placeholder="문제를 입력하세요 (예: 사회복지사 윤리강령의 기본 가치가 아닌 것은?)">
+        <div class="choice-row"><span>1</span><input id="qOpt1" placeholder="선택지 1"></div>
+        <div class="choice-row"><span>2</span><input id="qOpt2" placeholder="선택지 2"></div>
+        <div class="choice-row"><span>3</span><input id="qOpt3" placeholder="선택지 3"></div>
+        <div class="choice-row"><span>4</span><input id="qOpt4" placeholder="선택지 4"></div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+          <span style="color:var(--muted);font-size:.9rem">정답 번호</span>
+          <select id="qAnswer" style="border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-family:inherit">
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btnStartQuiz" style="margin-top:10px">퀴즈 시작</button>
+      </div>
+
+      <div id="quizLive" class="quiz-live" style="display:none">
+        <div class="quiz-timer-mini" id="quizTimerMini">⏳ 생각 시간 15초</div>
+        <div class="quiz-q" id="liveQ"></div>
+        <div class="quiz-choices" id="liveChoices"></div>
+        <div class="row" style="margin-top:24px;justify-content:center">
+          <button class="btn btn-primary" id="btnRevealAnswer">🔎 정답 공개</button>
+          <button class="btn btn-ghost" id="btnNewQuiz">새 문제 만들기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── 타이머 ───────── -->
+  <section class="panel" id="panel-timer">
+    <div class="card timer-card" id="timerCard" style="text-align:center">
+      <div class="timer-tabs">
+        <button class="timer-mode-btn active" data-mode="group">조별활동 · 토론 시간</button>
+        <button class="timer-mode-btn" data-mode="solo">개인 발표 (10분)</button>
+      </div>
+
+      <div id="groupTimer">
+        <div class="presets">
+          <button class="preset-btn" data-sec="300">5분</button>
+          <button class="preset-btn active" data-sec="600">10분</button>
+          <button class="preset-btn" data-sec="900">15분</button>
+          <button class="preset-btn" data-sec="1200">20분</button>
+        </div>
+      </div>
+
+      <div id="soloInfo" style="display:none;color:var(--muted);font-size:.95rem;margin-bottom:14px">
+        1인 발표 10분 고정 · 8분에 노란색, 10분에 빨간색 경고
+      </div>
+
+      <div class="timer-display" id="timerDisplay">10:00</div>
+      <div class="timer-status" id="timerStatus">대기 중</div>
+      <div class="row" style="justify-content:center">
+        <button class="btn btn-primary" id="btnTimerStart">시작</button>
+        <button class="btn btn-ghost" id="btnTimerPause">일시정지</button>
+        <button class="btn btn-ghost" id="btnTimerReset">초기화</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── 버저 ───────── -->
+  <section class="panel" id="panel-buzzer">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:18px">
+        <input id="buzzerNames" style="width:100%;border:1px solid var(--line);border-radius:12px;
+          padding:12px 14px;font-size:1rem;font-family:inherit;background:#FCFAF7;text-align:center"
+          value="1조, 2조, 3조, 4조" placeholder="쉼표로 팀 이름 입력 (예: 1조, 2조, 3조)">
+        <button class="btn btn-ghost" id="btnBuzzerApply" style="margin-top:10px">팀 구성 적용</button>
+      </div>
+      <div class="buzzer-grid" id="buzzerGrid"></div>
+      <div class="row" style="justify-content:center;margin-top:18px">
+        <button class="btn btn-primary" id="btnBuzzerReset">🔄 라운드 초기화</button>
+      </div>
+      <p class="hint" style="text-align:center">문제를 낸 뒤, 먼저 답한 조를 교수자가 눌러주세요. 누른 순서대로 번호가 매겨집니다.</p>
+    </div>
+  </section>
+
+  <!-- ───────── 감정체크 ───────── -->
+  <section class="panel" id="panel-mood">
+    <div class="card" style="text-align:center">
+      <p class="hint" style="margin-top:0">오늘 컨디션에 맞는 이모지를 눌러주세요. 익명으로 집계됩니다.</p>
+      <div class="mood-grid" id="moodGrid"></div>
+      <div class="mood-bars" id="moodBars"></div>
+      <button class="btn btn-ghost" id="btnMoodReset" style="margin-top:18px">체크인 초기화</button>
+    </div>
+  </section>
+
+  <!-- ───────── 점수판 ───────── -->
+  <section class="panel" id="panel-score">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:18px">
+        <input id="scoreNames" style="width:100%;border:1px solid var(--line);border-radius:12px;
+          padding:12px 14px;font-size:1rem;font-family:inherit;background:#FCFAF7;text-align:center"
+          value="1조, 2조, 3조, 4조" placeholder="쉼표로 팀 이름 입력">
+        <button class="btn btn-ghost" id="btnScoreApply" style="margin-top:10px">팀 구성 적용</button>
+      </div>
+      <div class="score-grid" id="scoreGrid"></div>
+      <div class="row" style="justify-content:center;margin-top:18px">
+        <button class="btn btn-ghost" id="btnScoreReset">전체 점수 초기화</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>사회복지행정론 · 연성대학교 수업용 도구</footer>
+
+<script>
+// ── 탭 전환 ──
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── 뽑기 ──
+let pool = [];
+let used = [];
+function refreshPoolFromText(){
+  const names = document.getElementById('nameInput').value
+    .split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  pool = names.filter(n => !used.includes(n));
+  renderPoolList(names);
+}
+function renderPoolList(names){
+  const el = document.getElementById('poolList');
+  el.innerHTML = '';
+  names.forEach(n=>{
+    const c = document.createElement('span');
+    c.className = 'chip' + (used.includes(n) ? ' used' : '');
+    c.textContent = n;
+    el.appendChild(c);
+  });
+}
+document.getElementById('nameInput').addEventListener('input', refreshPoolFromText);
+
+// 간단한 효과음 (Web Audio API, 외부 파일 불필요)
+let audioCtx = null;
+function beep(freq, dur, delay=0, type='sine', vol=0.18){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = audioCtx.currentTime + delay;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, t0);
+    gain.gain.setValueAtTime(vol, t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t0); osc.stop(t0 + dur);
+  }catch(e){}
+}
+function tickSound(){ beep(520, 0.05, 0, 'square', 0.10); }
+function winSound(){
+  beep(660,0.12,0,'triangle',0.22); beep(880,0.14,0.12,'triangle',0.22); beep(1040,0.22,0.26,'triangle',0.24);
+}
+
+function burstConfetti(container){
+  const colors = ['#C2703D','#5C8A63','#D8A13A','#5B7C99','#9A6B8F'];
+  const rect = container.getBoundingClientRect();
+  for(let i=0;i<28;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    const size = 6 + Math.random()*6;
+    el.style.width = size+'px';
+    el.style.height = (size*0.5)+'px';
+    el.style.left = (10 + Math.random()*80) + '%';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.transform = `rotate(${Math.random()*360}deg)`;
+    container.appendChild(el);
+    const fall = 160 + Math.random()*90;
+    const drift = (Math.random()-0.5) * 120;
+    const rot = (Math.random()-0.5) * 720;
+    const duration = 900 + Math.random()*500;
+    el.animate([
+      { transform: `translate(0,0) rotate(0deg)`, opacity: 1 },
+      { transform: `translate(${drift}px, ${fall}px) rotate(${rot}deg)`, opacity: 0 }
+    ], { duration, easing: 'cubic-bezier(.2,.6,.4,1)', fill:'forwards' });
+    setTimeout(()=> el.remove(), duration + 50);
+  }
+}
+
+let spinning = false;
+document.getElementById('btnPick').addEventListener('click', ()=>{
+  if(spinning) return;
+  refreshPoolFromText();
+  const resultEl = document.getElementById('pickResult');
+  const stageBox = document.getElementById('stageBox');
+  const pickBtn = document.getElementById('btnPick');
+
+  if(pool.length === 0){
+    resultEl.className = 'empty';
+    resultEl.textContent = '뽑을 사람이 없습니다. 초기화해주세요.';
+    return;
+  }
+
+  spinning = true;
+  pickBtn.classList.add('spinning');
+  pickBtn.disabled = true;
+  resultEl.className = 'name spinning';
+
+  const winner = pool[Math.floor(Math.random()*pool.length)];
+  let elapsed = 0;
+  let delay = 55;
+  const totalDuration = 1700;
+
+  function spinStep(){
+    const r = pool[Math.floor(Math.random()*pool.length)];
+    resultEl.textContent = r;
+    tickSound();
+    elapsed += delay;
+    delay = Math.min(delay * 1.14, 220); // 점점 느려짐
+    if(elapsed < totalDuration){
+      setTimeout(spinStep, delay);
+    } else {
+      resultEl.className = 'name winner';
+      resultEl.innerHTML = '<span class="medal">🎉</span>' + winner;
+      used.push(winner);
+      refreshPoolFromText();
+      winSound();
+      burstConfetti(stageBox);
+      spinning = false;
+      pickBtn.classList.remove('spinning');
+      pickBtn.disabled = false;
+    }
+  }
+  spinStep();
+});
+document.getElementById('btnResetPick').addEventListener('click', ()=>{
+  used = [];
+  document.getElementById('pickResult').className = 'empty';
+  document.getElementById('pickResult').textContent = '명단을 입력하고 뽑기를 눌러주세요';
+  refreshPoolFromText();
+});
+refreshPoolFromText();
+
+// ── 퀴즈 ──
+let quizCountdownInterval = null;
+function startQuizCountdown(){
+  let left = 15;
+  const mini = document.getElementById('quizTimerMini');
+  mini.classList.remove('warn');
+  mini.textContent = `⏳ 생각 시간 ${left}초`;
+  clearInterval(quizCountdownInterval);
+  quizCountdownInterval = setInterval(()=>{
+    left--;
+    if(left <= 5){ mini.classList.add('warn'); beep(500,0.06,0,'square',0.12); }
+    if(left > 0){
+      mini.textContent = `⏳ 생각 시간 ${left}초`;
+    } else {
+      mini.textContent = '⏰ 시간 종료! 이제 정답을 골라보세요';
+      clearInterval(quizCountdownInterval);
+      beep(440,0.15,0,'square',0.18); beep(440,0.15,0.18,'square',0.18);
+    }
+  }, 1000);
+}
+document.getElementById('btnStartQuiz').addEventListener('click', ()=>{
+  const q = document.getElementById('qText').value.trim() || '문제를 입력해주세요';
+  const opts = [1,2,3,4].map(i => document.getElementById('qOpt'+i).value.trim() || `선택지 ${i}`);
+  const answer = parseInt(document.getElementById('qAnswer').value, 10);
+
+  document.getElementById('liveQ').textContent = q;
+  const choicesEl = document.getElementById('liveChoices');
+  choicesEl.innerHTML = '';
+  opts.forEach((opt, idx)=>{
+    const n = idx+1;
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.dataset.n = n;
+    div.dataset.correct = (n === answer) ? '1' : '0';
+    div.innerHTML = `<span class="num">${n}</span><span class="txt">${opt}</span>`;
+    choicesEl.appendChild(div);
+  });
+
+  document.getElementById('quizSetup').style.display = 'none';
+  document.getElementById('quizLive').style.display = 'block';
+  startQuizCountdown();
+});
+document.getElementById('btnRevealAnswer').addEventListener('click', ()=>{
+  clearInterval(quizCountdownInterval);
+  document.getElementById('quizTimerMini').textContent = '🔎 정답 공개!';
+  let hasCorrect = false;
+  document.querySelectorAll('#liveChoices .opt').forEach((el,i)=>{
+    const isCorrect = el.dataset.correct === '1';
+    el.classList.add(isCorrect ? 'correct' : 'wrong');
+    if(isCorrect){ hasCorrect = true; setTimeout(()=> burstConfetti(el), 100); }
+  });
+  winSound();
+});
+document.getElementById('btnNewQuiz').addEventListener('click', ()=>{
+  clearInterval(quizCountdownInterval);
+  document.querySelectorAll('#liveChoices .opt').forEach(el=> el.classList.remove('correct','wrong'));
+  document.getElementById('quizLive').style.display = 'none';
+  document.getElementById('quizSetup').style.display = 'flex';
+});
+
+// ── 타이머 ──
+let timerMode = 'group';
+let groupSeconds = 600;
+const soloSeconds = 600;
+let remaining = groupSeconds;
+let timerInterval = null;
+let running = false;
+
+const displayEl = document.getElementById('timerDisplay');
+const statusEl = document.getElementById('timerStatus');
+
+function fmt(sec){
+  const m = Math.floor(sec/60), s = sec%60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+let timerWasZero = false;
+function renderTimer(){
+  displayEl.textContent = fmt(Math.max(0,remaining));
+  displayEl.classList.remove('warn','danger');
+  statusEl.classList.remove('warn','danger');
+  const cardEl = document.getElementById('timerCard');
+  cardEl.classList.remove('warn','danger');
+
+  if(timerMode === 'solo'){
+    const elapsed = soloSeconds - remaining;
+    if(elapsed >= soloSeconds){
+      displayEl.classList.add('danger'); statusEl.classList.add('danger'); cardEl.classList.add('danger');
+      statusEl.textContent = '발표 시간이 종료되었습니다';
+    } else if(elapsed >= 480){ // 8분 경과
+      displayEl.classList.add('warn'); statusEl.classList.add('warn'); cardEl.classList.add('warn');
+      statusEl.textContent = '마무리 시간입니다 (8분 경과)';
+    } else if(running){
+      statusEl.textContent = '발표 진행 중';
+    } else {
+      statusEl.textContent = '대기 중';
+    }
+  } else {
+    if(remaining <= 0){
+      displayEl.classList.add('danger'); statusEl.classList.add('danger'); cardEl.classList.add('danger');
+      statusEl.textContent = '시간 종료';
+    } else if(remaining <= 60){
+      displayEl.classList.add('warn'); statusEl.classList.add('warn'); cardEl.classList.add('warn');
+      statusEl.textContent = '1분 남았습니다';
+    } else if(running){
+      statusEl.textContent = '진행 중';
+    } else {
+      statusEl.textContent = '대기 중';
+    }
+  }
+}
+function tick(){
+  remaining = Math.max(0, remaining - 1);
+  renderTimer();
+  if(remaining <= 10 && remaining > 0) beep(440, 0.08, 0, 'square', 0.12);
+  if(remaining <= 0){
+    clearInterval(timerInterval);
+    running = false;
+    if(!timerWasZero){
+      timerWasZero = true;
+      beep(300,0.3,0,'sawtooth',0.2); beep(300,0.3,0.35,'sawtooth',0.2); beep(300,0.4,0.7,'sawtooth',0.22);
+    }
+  }
+}
+document.getElementById('btnTimerStart').addEventListener('click', ()=>{
+  if(running) return;
+  running = true;
+  timerInterval = setInterval(tick, 1000);
+  renderTimer();
+});
+document.getElementById('btnTimerPause').addEventListener('click', ()=>{
+  running = false;
+  clearInterval(timerInterval);
+  renderTimer();
+});
+document.getElementById('btnTimerReset').addEventListener('click', ()=>{
+  running = false;
+  timerWasZero = false;
+  clearInterval(timerInterval);
+  remaining = (timerMode === 'solo') ? soloSeconds : groupSeconds;
+  renderTimer();
+});
+document.querySelectorAll('.preset-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    groupSeconds = parseInt(btn.dataset.sec, 10);
+    running = false;
+    timerWasZero = false;
+    clearInterval(timerInterval);
+    remaining = groupSeconds;
+    renderTimer();
+  });
+});
+document.querySelectorAll('.timer-mode-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.timer-mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    timerMode = btn.dataset.mode;
+    running = false;
+    timerWasZero = false;
+    clearInterval(timerInterval);
+    document.getElementById('groupTimer').style.display = (timerMode === 'group') ? 'block' : 'none';
+    document.getElementById('soloInfo').style.display = (timerMode === 'solo') ? 'block' : 'none';
+    remaining = (timerMode === 'solo') ? soloSeconds : groupSeconds;
+    renderTimer();
+  });
+});
+renderTimer();
+
+// ── 버저 ──
+let buzzerTeams = [];
+let buzzerOrder = []; // 눌린 순서대로 팀 이름 저장
+function buildBuzzerGrid(){
+  const raw = document.getElementById('buzzerNames').value;
+  buzzerTeams = raw.split(',').map(s=>s.trim()).filter(Boolean);
+  if(buzzerTeams.length === 0) buzzerTeams = ['1조','2조','3조','4조'];
+  buzzerOrder = [];
+  renderBuzzerGrid();
+}
+const RANK_MEDAL = ['🥇','🥈','🥉'];
+function renderBuzzerGrid(){
+  const grid = document.getElementById('buzzerGrid');
+  grid.innerHTML = '';
+  buzzerTeams.forEach(name=>{
+    const idx = buzzerOrder.indexOf(name);
+    const btn = document.createElement('button');
+    let cls = 'buzzer-btn';
+    if(idx>=0) cls += ' pressed';
+    if(idx===0) cls += ' rank-1'; else if(idx===1) cls += ' rank-2'; else if(idx===2) cls += ' rank-3';
+    btn.className = cls;
+    const orderLabel = idx>=0 ? `<span class="order">${RANK_MEDAL[idx] || (idx+1)}</span>` : '';
+    btn.innerHTML = orderLabel + name;
+    btn.addEventListener('click', ()=>{
+      if(buzzerOrder.includes(name)) return;
+      buzzerOrder.push(name);
+      const rank = buzzerOrder.length;
+      if(rank === 1) burstConfetti(document.getElementById('buzzerGrid'));
+      beep(760 - rank*50, 0.15, 0, 'square', 0.22);
+      renderBuzzerGrid();
+    });
+    grid.appendChild(btn);
+  });
+}
+document.getElementById('btnBuzzerApply').addEventListener('click', buildBuzzerGrid);
+document.getElementById('btnBuzzerReset').addEventListener('click', ()=>{
+  buzzerOrder = [];
+  renderBuzzerGrid();
+  beep(440,0.1,0,'sine',0.15);
+});
+buildBuzzerGrid();
+
+// ── 감정 체크인 ──
+const MOODS = [
+  {emo:'😄', lbl:'아주 좋음'},
+  {emo:'🙂', lbl:'좋음'},
+  {emo:'😐', lbl:'보통'},
+  {emo:'😟', lbl:'힘듦'},
+  {emo:'😣', lbl:'많이 힘듦'},
+];
+let moodCounts = [0,0,0,0,0];
+function renderMood(){
+  const grid = document.getElementById('moodGrid');
+  grid.innerHTML = '';
+  MOODS.forEach((m,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'mood-btn';
+    btn.innerHTML = `<span class="emo">${m.emo}</span><span class="lbl">${m.lbl}</span>`;
+    btn.addEventListener('click', ()=>{
+      moodCounts[i]++;
+      beep(500 + i*40, 0.08, 0, 'sine', 0.15);
+      btn.classList.remove('bump'); void btn.offsetWidth; btn.classList.add('bump');
+      renderMoodBars();
+    });
+    grid.appendChild(btn);
+  });
+  renderMoodBars();
+}
+function renderMoodBars(){
+  const bars = document.getElementById('moodBars');
+  const total = moodCounts.reduce((a,b)=>a+b,0) || 1;
+  const maxCount = Math.max(...moodCounts);
+  bars.innerHTML = '';
+  MOODS.forEach((m,i)=>{
+    const pct = Math.round((moodCounts[i]/total)*100);
+    const isLeading = moodCounts[i] > 0 && moodCounts[i] === maxCount;
+    const row = document.createElement('div');
+    row.className = 'mood-bar-row' + (isLeading ? ' leading' : '');
+    row.innerHTML = `<span class="emo">${m.emo}</span>
+      <div class="mood-bar-track"><div class="mood-bar-fill" style="width:${moodCounts[i]?pct:0}%"></div></div>
+      <span class="cnt">${moodCounts[i]}</span>`;
+    bars.appendChild(row);
+  });
+}
+document.getElementById('btnMoodReset').addEventListener('click', ()=>{
+  moodCounts = [0,0,0,0,0];
+  renderMoodBars();
+});
+renderMood();
+
+// ── 점수판 ──
+let scoreTeams = [];
+function buildScoreGrid(){
+  const raw = document.getElementById('scoreNames').value;
+  const names = raw.split(',').map(s=>s.trim()).filter(Boolean);
+  scoreTeams = names.map(name=>{
+    const prev = scoreTeams.find(t=>t.name===name);
+    return { name, score: prev ? prev.score : 0 };
+  });
+  if(scoreTeams.length === 0) scoreTeams = ['1조','2조','3조','4조'].map(name=>({name, score:0}));
+  renderScoreGrid();
+}
+function renderScoreGrid(){
+  const grid = document.getElementById('scoreGrid');
+  grid.innerHTML = '';
+  const maxScore = Math.max(...scoreTeams.map(t=>t.score));
+  scoreTeams.forEach(team=>{
+    const isLeading = scoreTeams.length > 1 && team.score > 0 && team.score === maxScore;
+    const card = document.createElement('div');
+    card.className = 'score-card' + (isLeading ? ' leading' : '');
+    card.innerHTML = `<div class="tname">${team.name}</div>
+      <div class="tscore">${team.score}</div>
+      <div class="srow">
+        <button class="minus">−</button>
+        <button class="plus">+</button>
+      </div>`;
+    card.querySelector('.plus').addEventListener('click', ()=>{
+      team.score++; beep(700,0.08,0,'sine',0.15);
+      if(isLeading || team.score === maxScore+1) burstConfetti(card);
+      renderScoreGrid();
+      bumpScore(team.name);
+    });
+    card.querySelector('.minus').addEventListener('click', ()=>{
+      team.score--; beep(300,0.08,0,'sine',0.15); renderScoreGrid();
+    });
+    grid.appendChild(card);
+  });
+}
+function bumpScore(name){
+  const cards = document.querySelectorAll('#scoreGrid .score-card');
+  cards.forEach(c=>{
+    if(c.querySelector('.tname').textContent === name){
+      const el = c.querySelector('.tscore');
+      el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+    }
+  });
+}
+document.getElementById('btnScoreApply').addEventListener('click', buildScoreGrid);
+document.getElementById('btnScoreReset').addEventListener('click', ()=>{
+  scoreTeams.forEach(t=> t.score = 0);
+  renderScoreGrid();
+});
+buildScoreGrid();
+</script>
+</body>
+</html>
