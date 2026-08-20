@@ -4,26 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수업 도구 · 사회복지행정론</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=Noto+Serif+KR:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#FBF7F2; --card:#FFFFFF; --ink:#2F2A26; --muted:#7A6E64;
-    --line:#EAE0D5; --accent:#C2703D; --accent-soft:#F6E9DE;
-    --green:#5C8A63; --red:#C24A3D; --yellow:#D8A13A;
+    --bg:#ECE8DE; --card:#F6F3EA; --ink:#22262B; --muted:#6b6656;
+    --line:#c9c2b0; --accent:#A8472B; --accent-soft:#EFDCCF;
+    --navy:#26364F; --navy-deep:#182437; --gold:#B7923F;
+    --green:#3E7C5A; --red:#A8472B; --yellow:#B7923F;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    font-family:'Noto Sans KR',"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
     display:flex;flex-direction:column;align-items:center;min-height:100vh}
   header{width:100%;padding:20px 24px 0;text-align:center}
-  header h1{font-size:1.4rem;margin:0 0 2px;letter-spacing:-.02em}
+  header h1{font-size:1.4rem;margin:0 0 2px;letter-spacing:-.02em;font-family:'Noto Serif KR',serif;color:var(--navy-deep)}
   header p{margin:0;color:var(--muted);font-size:.88rem}
 
-  nav{display:flex;gap:6px;margin:20px auto 8px;background:#F1E7DB;padding:6px;border-radius:16px;
+  nav{display:flex;gap:6px;margin:20px auto 8px;background:#E3DECE;padding:6px;border-radius:16px;
     flex-wrap:wrap;justify-content:center;max-width:760px}
   nav button{border:none;background:transparent;padding:10px 18px;border-radius:12px;
     font-size:.98rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap}
-  nav button.active{background:#fff;color:var(--accent);box-shadow:0 2px 10px rgba(90,70,55,.10)}
+  nav button.active{background:#fff;color:var(--accent);box-shadow:0 2px 10px rgba(24,36,55,.10)}
 
   main{width:100%;max-width:760px;flex:1;padding:16px 20px 60px;display:flex;flex-direction:column;align-items:center}
   .panel{display:none;width:100%;flex-direction:column;align-items:center}
@@ -34,18 +36,18 @@
 
   /* ── 뽑기 ── */
   .stage{width:100%;min-height:240px;border-radius:24px;
-    background:radial-gradient(circle at 50% 30%, #FDE9CE 0%, #F6E9DE 55%, #F0DFCF 100%);
+    background:radial-gradient(circle at 50% 30%, #F5E6CC 0%, #EFDCCF 55%, #E3D2BE 100%);
     display:flex;align-items:center;justify-content:center;margin-bottom:22px;position:relative;
-    overflow:hidden;border:3px solid #fff;box-shadow:inset 0 0 0 2px var(--accent-soft), 0 12px 28px rgba(150,100,60,.18)}
+    overflow:hidden;border:3px solid #fff;box-shadow:inset 0 0 0 2px var(--accent-soft), 0 12px 28px rgba(24,36,55,.18)}
   .stage::before{content:"";position:absolute;inset:0;
-    background:repeating-conic-gradient(from 0deg, rgba(194,112,61,.05) 0deg 8deg, transparent 8deg 16deg);
+    background:repeating-conic-gradient(from 0deg, rgba(168,71,43,.05) 0deg 8deg, transparent 8deg 16deg);
     animation:spinbg 18s linear infinite}
   @keyframes spinbg{to{transform:rotate(360deg)}}
   .stage .name{font-size:3.4rem;font-weight:800;color:var(--accent);letter-spacing:-.02em;
     position:relative;z-index:1;padding:10px 26px;transition:transform .05s}
   .stage .name.spinning{animation:jitter .09s linear infinite}
   .stage .name.winner{animation:winnerPop .55s cubic-bezier(.34,1.56,.64,1);
-    background:#fff;border-radius:20px;box-shadow:0 10px 24px rgba(194,112,61,.25)}
+    background:#fff;border-radius:20px;box-shadow:0 10px 24px rgba(168,71,43,.25)}
   @keyframes jitter{
     0%{transform:translateY(0) scale(1)}
     50%{transform:translateY(-4px) scale(1.03)}
@@ -64,7 +66,7 @@
   #btnPick{position:relative;overflow:hidden}
   .row{display:flex;gap:10px;width:100%;flex-wrap:wrap;justify-content:center}
   textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:14px;
-    padding:14px 16px;font-size:1rem;font-family:inherit;resize:vertical;background:#FCFAF7}
+    padding:14px 16px;font-size:1rem;font-family:inherit;resize:vertical;background:#F8F5EC}
   .btn{border:none;border-radius:14px;padding:16px 28px;font-size:1.1rem;font-weight:700;
     cursor:pointer;font-family:inherit;transition:transform .05s}
   .btn:active{transform:scale(.97)}
@@ -78,7 +80,7 @@
   /* ── 퀴즈 ── */
   .quiz-setup{width:100%;display:flex;flex-direction:column;gap:10px}
   .quiz-setup input, .quiz-setup textarea{border:1px solid var(--line);border-radius:12px;
-    padding:12px 14px;font-size:1rem;font-family:inherit;background:#FCFAF7}
+    padding:12px 14px;font-size:1rem;font-family:inherit;background:#F8F5EC}
   .choice-row{display:flex;gap:8px;align-items:center}
   .choice-row span{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);
     color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex:none}
@@ -120,8 +122,8 @@
   @keyframes pulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.04)}}
   @keyframes pulseStrong{0%,100%{transform:scale(1)} 50%{transform:scale(1.08)}}
   .timer-card{transition:background .4s}
-  .timer-card.warn{background:#FFF7E8}
-  .timer-card.danger{background:#FDEDEA}
+  .timer-card.warn{background:#F7EEDC}
+  .timer-card.danger{background:#F7E3DC}
   .presets{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
   .preset-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 18px;
     font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit}
@@ -138,9 +140,9 @@
   .buzzer-btn:active{transform:scale(.95)}
   .buzzer-btn.pressed{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);
     animation:buzzPop .4s cubic-bezier(.34,1.56,.64,1)}
-  .buzzer-btn.rank-1{border-color:#D8A13A;background:#FEF6E4;color:#9C6B10;box-shadow:0 8px 20px rgba(216,161,58,.3)}
-  .buzzer-btn.rank-2{border-color:#B7C0C8;background:#F3F5F6;color:#5A6670}
-  .buzzer-btn.rank-3{border-color:#C99368;background:#FBF1E8;color:#8A5A34}
+  .buzzer-btn.rank-1{border-color:#B7923F;background:#FBF1DA;color:#8a5a12;box-shadow:0 8px 20px rgba(183,146,63,.3)}
+  .buzzer-btn.rank-2{border-color:#26364F;background:#EAEDF1;color:#26364F}
+  .buzzer-btn.rank-3{border-color:#C97A5C;background:#F7E9E3;color:#A8472B}
   .buzzer-btn .order{display:block;font-size:2rem;margin-bottom:6px}
   .buzzer-btn.disabled-others{opacity:.45;cursor:default}
   @keyframes buzzPop{
@@ -169,7 +171,7 @@
   .score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
   .score-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center;
     position:relative;transition:transform .2s, box-shadow .2s}
-  .score-card.leading{border-color:#D8A13A;box-shadow:0 10px 24px rgba(216,161,58,.22);transform:translateY(-3px)}
+  .score-card.leading{border-color:#B7923F;box-shadow:0 10px 24px rgba(183,146,63,.22);transform:translateY(-3px)}
   .score-card.leading::before{content:"👑";position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:1.4rem}
   .score-card .tname{font-weight:700;margin-bottom:8px;font-size:1rem}
   .score-card .tscore{font-size:2.6rem;font-weight:800;color:var(--accent);margin-bottom:10px;
@@ -178,7 +180,7 @@
   @keyframes scoreBump{0%{transform:scale(1)} 50%{transform:scale(1.25)} 100%{transform:scale(1)}}
   .score-card .srow{display:flex;gap:8px;justify-content:center}
   .score-card button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);
-    background:#FCFAF7;font-size:1.2rem;font-weight:800;cursor:pointer;font-family:inherit}
+    background:#F8F5EC;font-size:1.2rem;font-weight:800;cursor:pointer;font-family:inherit}
   .score-card button:active{transform:scale(.9)}
   .score-card button.plus{color:var(--green);border-color:var(--green)}
   .score-card button.minus{color:var(--red);border-color:var(--red)}
@@ -298,7 +300,7 @@
     <div class="card">
       <div style="text-align:center;margin-bottom:18px">
         <input id="buzzerNames" style="width:100%;border:1px solid var(--line);border-radius:12px;
-          padding:12px 14px;font-size:1rem;font-family:inherit;background:#FCFAF7;text-align:center"
+          padding:12px 14px;font-size:1rem;font-family:inherit;background:#F8F5EC;text-align:center"
           value="1조, 2조, 3조, 4조" placeholder="쉼표로 팀 이름 입력 (예: 1조, 2조, 3조)">
         <button class="btn btn-ghost" id="btnBuzzerApply" style="margin-top:10px">팀 구성 적용</button>
       </div>
@@ -325,7 +327,7 @@
     <div class="card">
       <div style="text-align:center;margin-bottom:18px">
         <input id="scoreNames" style="width:100%;border:1px solid var(--line);border-radius:12px;
-          padding:12px 14px;font-size:1rem;font-family:inherit;background:#FCFAF7;text-align:center"
+          padding:12px 14px;font-size:1rem;font-family:inherit;background:#F8F5EC;text-align:center"
           value="1조, 2조, 3조, 4조" placeholder="쉼표로 팀 이름 입력">
         <button class="btn btn-ghost" id="btnScoreApply" style="margin-top:10px">팀 구성 적용</button>
       </div>
@@ -393,7 +395,7 @@ function winSound(){
 }
 
 function burstConfetti(container){
-  const colors = ['#C2703D','#5C8A63','#D8A13A','#5B7C99','#9A6B8F'];
+  const colors = ['#A8472B','#B7923F','#26364F','#C97A5C','#6b6656'];
   const rect = container.getBoundingClientRect();
   for(let i=0;i<28;i++){
     const el = document.createElement('div');

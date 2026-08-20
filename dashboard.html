@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>교수 업무 대시보드 — 사회복지행정론</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE8DE; --ink:#22262B; --navy:#26364F; --navy-deep:#182437;
+    --seal:#A8472B; --seal-soft:#C97A5C; --gold:#B7923F; --line:#c9c2b0; --card:#F6F3EA;
+    --new:#8a8368; --review:#B7923F; --approved:#3E7C5A; --done:#26364F; --danger:#A8472B;
+    --shadow: 0 8px 24px rgba(24,36,55,.10), 0 2px 6px rgba(24,36,55,.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:'Noto Sans KR',sans-serif; background:var(--paper); color:var(--ink);
+    line-height:1.6; padding:0 0 60px;
+  }
+  .doc-top{
+    background:var(--navy-deep); color:#EDE7D8; padding:14px 6vw; display:flex; justify-content:space-between;
+    align-items:center; font-size:0.78rem; letter-spacing:0.04em; border-bottom:3px double var(--gold);
+  }
+  .page-wrap{ padding:28px 6vw 0; }
+  h1{ font-family:'Noto Serif KR',serif; font-size:1.5rem; margin:0 0 4px; color:var(--navy-deep); }
+  .sub{ color:#6b6656; font-size:.85rem; margin-bottom:22px; }
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px;}
+  .stat{
+    background:var(--card); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow);
+    border:1px solid var(--line);
+  }
+  .stat .num{font-size:1.9rem; font-weight:800; color:var(--seal); font-family:'Noto Serif KR',serif;}
+  .stat .label{font-size:.82rem; color:#6b6656; margin-top:2px;}
+  .stat.ok .num{color:var(--approved);}
+  .stat.warn .num{color:var(--danger);}
+
+  /* F-risk settings bar */
+  .risk-panel{
+    background:var(--card); border:1px solid var(--gold); border-radius:10px; padding:14px 18px;
+    margin-bottom:22px; box-shadow:var(--shadow); display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .risk-panel .rt{ font-weight:700; color:var(--navy-deep); font-size:.92rem; display:flex; align-items:center; gap:8px;}
+  .risk-panel .rt .icon{ color:var(--seal); font-size:1.1rem; }
+  .risk-panel label{ font-size:.82rem; color:#6b6656; }
+  .risk-panel input[type=number]{
+    width:56px; border:1px solid var(--line); border-radius:6px; padding:5px 8px; font-size:.85rem; text-align:center;
+  }
+  .risk-panel .note{ font-size:.75rem; color:#8a8368; }
+  .spacer{flex:1;}
+
+  .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:18px; flex-wrap:wrap;}
+  .toolbar select, .toolbar input[type=text]{
+    border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:.85rem; background:#fff;
+  }
+  .btn{
+    border:none; border-radius:8px; padding:8px 14px; font-size:.85rem; font-weight:700; cursor:pointer;
+    font-family:'Noto Sans KR',sans-serif; transition:transform .1s ease, filter .1s ease;
+  }
+  .btn:active{transform:scale(.96);}
+  .btn-ghost{background:#fff; border:1px solid var(--line); color:var(--ink);}
+  .btn-ghost:hover{background:var(--card);}
+  .btn-undo{background:#EFDCCF; color:var(--seal);}
+  .btn-undo:hover{filter:brightness(0.97);}
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy-deep); color:#F3EFE3; padding:10px 18px; border-radius:999px; font-size:.85rem;
+    opacity:0; pointer-events:none; transition:all .25s ease; z-index:999; box-shadow:var(--shadow);
+    display:flex; align-items:center; gap:10px;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast button{background:none;border:none;color:var(--gold);font-weight:800;cursor:pointer;font-size:.85rem;}
+
+  section{margin-bottom:32px;}
+  .sec-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:12px; border-bottom:2px solid var(--navy-deep); padding-bottom:8px;}
+  .sec-num{ font-family:'Noto Serif KR',serif; color:var(--seal); font-weight:700; font-size:0.95rem; }
+  .sec-head h2{ font-size:1.15rem; margin:0; color:var(--navy-deep); font-weight:700; font-family:'Noto Serif KR',serif;}
+  .sec-head .count{
+    background:#EFDCCF; color:var(--seal); font-size:.72rem; font-weight:800; padding:2px 9px; border-radius:999px;
+  }
+
+  table{width:100%; border-collapse:collapse; background:var(--card); border-radius:10px; overflow:hidden; box-shadow:var(--shadow);}
+  thead th{
+    background:#E3DECE; text-align:left; font-size:.75rem; color:#6b6656; font-weight:700;
+    padding:10px 12px; border-bottom:1px solid var(--line); text-transform:uppercase; letter-spacing:.04em;
+  }
+  tbody td{ padding:11px 12px; font-size:.85rem; border-bottom:1px solid var(--line); vertical-align:top; }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.row-done{opacity:.55;}
+  tbody tr.row-risk{ background:#F7E9E3; }
+  tbody tr.row-fail{ background:#F3D6CC; }
+  .sid{font-weight:800; color:var(--seal); font-family:'Noto Serif KR',serif;}
+  .raw{color:#6b6656; font-size:.78rem; line-height:1.4;}
+  .reason{font-size:.78rem; color:var(--ink); margin-top:3px;}
+  .badge{
+    display:inline-block; font-size:.72rem; font-weight:800; padding:3px 10px; border-radius:999px;
+    color:#fff; white-space:nowrap;
+  }
+  .badge.new{background:var(--new);}
+  .badge.review{background:var(--review);}
+  .badge.approved{background:var(--approved);}
+  .badge.done{background:var(--done);}
+  .risk-badge{
+    display:inline-block; font-size:.68rem; font-weight:800; padding:2px 8px; border-radius:999px;
+    margin-left:6px;
+  }
+  .risk-badge.safe{background:#DCE7DE; color:var(--approved);}
+  .risk-badge.warn{background:#F3D9A6; color:#8a5a12;}
+  .risk-badge.fail{background:var(--seal); color:#fff;}
+  .abscount{ font-weight:800; font-family:'Noto Serif KR',serif; }
+  .next{font-size:.8rem;}
+  .actions{display:flex; gap:6px; flex-wrap:wrap;}
+  .actions .btn{padding:6px 11px; font-size:.78rem;}
+  .btn-approve{background:var(--approved); color:#fff;}
+  .btn-approve:hover{filter:brightness(1.05);}
+  .btn-reject{background:#fff; border:1px solid var(--danger); color:var(--danger);}
+  .lockmsg{font-size:.72rem; color:#8a8368; font-style:italic;}
+  .empty{padding:26px; text-align:center; color:#8a8368; font-size:.85rem;}
+  .guard{
+    margin-top:14px; font-size:.75rem; color:#6b6656; background:var(--card); border-radius:8px;
+    padding:8px 12px; display:flex; gap:6px; align-items:center; border:1px solid var(--line);
+  }
+  .guard b{color:var(--seal);}
+</style>
+</head>
+<body>
+
+<div class="doc-top"><span>연성대학교 · 사회복지경영과</span><span>교수 전용 · 비공개 경로</span></div>
+
+<div class="page-wrap">
+<h1>교수 업무 대시보드</h1>
+<div class="sub">사회복지행정론 · 2026학년도 2학기 · 학생 A01~A12 (가상 데이터) · 상태: 새 항목 → 검토 중 → 승인됨 → 완료</div>
+
+<div class="stats" id="statCards"></div>
+
+<div class="risk-panel">
+  <div class="rt"><span class="icon">⚠</span> 출석 F학점 관리 기준</div>
+  <label>15주 중 <input type="number" id="riskThreshold" value="4" min="1" max="15"> 회 결석 시 F 처리</label>
+  <label>경고 표시 시작 <input type="number" id="warnThreshold" value="3" min="1" max="15"> 회부터</label>
+  <div class="spacer"></div>
+  <div class="note">※ 기준 변경은 화면 표시에만 반영되며, 실제 성적 반영은 이 화면에서 실행되지 않습니다</div>
+</div>
+
+<div class="toolbar">
+  <select id="filterStatus">
+    <option value="all">전체 상태</option>
+    <option value="새 항목">새 항목</option>
+    <option value="검토 중">검토 중</option>
+    <option value="승인됨">승인됨</option>
+    <option value="완료">완료</option>
+  </select>
+  <select id="filterStudent">
+    <option value="all">전체 학생</option>
+  </select>
+  <input id="filterKeyword" type="text" placeholder="키워드 검색 (원자료·판정 이유)">
+  <button class="btn btn-ghost" id="resetFilterBtn">필터 초기화</button>
+  <div class="spacer"></div>
+  <button class="btn btn-undo" id="undoBtn" disabled>↺ 실행 취소</button>
+</div>
+
+<div class="guard">
+  <b>안전장치</b> — 이 화면의 승인 버튼은 화면 상태만 변경합니다. 성적 변경 · 메시지 발송 · 파일 삭제는 이 대시보드에서 실제로 실행되지 않으며, 별도 시스템에서 담당자가 직접 처리해야 합니다.
+</div>
+
+<section>
+  <div class="sec-head"><span class="sec-num">Ⅰ</span><h2>출결 현황 (F학점 관리 포함)</h2><span class="count" id="cnt1">0</span></div>
+  <table>
+    <thead>
+      <tr><th>학생</th><th>이번 건 원자료 / 판정 이유</th><th>누적 결석</th><th>상태</th><th>다음 행동</th><th>승인</th></tr>
+    </thead>
+    <tbody id="tbl1"></tbody>
+  </table>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">Ⅱ</span><h2>과제 제출 현황</h2><span class="count" id="cnt2">0</span></div>
+  <table>
+    <thead>
+      <tr><th>학생</th><th>원자료 / 판정 이유</th><th>상태</th><th>다음 행동</th><th>승인</th></tr>
+    </thead>
+    <tbody id="tbl2"></tbody>
+  </table>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">Ⅲ</span><h2>피드백 초안 목록</h2><span class="count" id="cnt3">0</span></div>
+  <table>
+    <thead>
+      <tr><th>학생</th><th>대상 과제</th><th>원자료 / 판정 이유</th><th>상태</th><th>다음 행동</th><th>승인</th></tr>
+    </thead>
+    <tbody id="tbl3"></tbody>
+  </table>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">Ⅳ</span><h2>행정 To-Do</h2><span class="count" id="cnt4">0</span></div>
+  <table>
+    <thead>
+      <tr><th>항목</th><th>관련 대상</th><th>원자료 / 판정 이유</th><th>상태</th><th>다음 행동</th><th>승인</th></tr>
+    </thead>
+    <tbody id="tbl4"></tbody>
+  </table>
+</section>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">되돌리기</button></div>
+
+<script>
+/* ---------- 학생 목록 ---------- */
+const STUDENTS = Array.from({length:12}, (_,i)=>'A'+String(i+1).padStart(2,'0'));
+const TOTAL_WEEKS = 15;
+
+/* ---------- 상태 상수 ---------- */
+const NEXT_ACTION = {
+  '새 항목':'담당 교수 검토 필요',
+  '검토 중':'승인 또는 반려 대기',
+  '승인됨':'실제 반영 절차 진행(수동)',
+  '완료':'조치 없음'
+};
+
+/* ---------- 가상 데이터: 학생별 누적 결석 횟수 (지금까지 진행된 8주 기준) ---------- */
+const ABSENCE_COUNT = {
+  A01:0, A02:1, A03:3, A04:0, A05:2, A06:4, A07:1, A08:0, A09:2, A10:3, A11:1, A12:5
+};
+
+/* ---------- 가상 데이터: ① 출석 ---------- */
+function seedAttendance(){
+  const cases = [
+    {status:'새 항목', raw:'QR 태그 미인식 (09:03)', reason:'태그 스캔 기록 없음 → 결석 추정'},
+    {status:'검토 중', raw:'카드 태그 09:12 (지각 기준 09:00)', reason:'지각 자동 판정, 사유서 미제출'},
+    {status:'승인됨', raw:'QR 태그 08:58', reason:'정상 출석으로 자동 확정 대기'},
+    {status:'완료', raw:'QR 태그 08:55', reason:'정상 출석 확정 완료'},
+  ];
+  return STUDENTS.map((sid, idx)=>{
+    const c = cases[idx % cases.length];
+    return { id:'ATT-'+sid, sid, raw:c.raw, reason:c.reason, status:c.status };
+  });
+}
+
+/* ---------- 가상 데이터: ② 과제 제출 ---------- */
+function seedHomework(){
+  const cases = [
+    {status:'새 항목', raw:'제출 파일 없음 (마감 23:59 경과)', reason:'미제출 자동 감지'},
+    {status:'검토 중', raw:'제출 파일 0KB (hwk3.hwp)', reason:'파일 손상 의심, 재제출 필요 여부 판단 대기'},
+    {status:'검토 중', raw:'제출 시각 00:14 (마감 23:59)', reason:'지각 제출, 인정 여부 판단 대기'},
+    {status:'승인됨', raw:'정상 제출 (22:40)', reason:'형식 이상 없음, 채점 대기'},
+    {status:'완료', raw:'정상 제출 및 채점 완료', reason:'과제 처리 완료'},
+  ];
+  return STUDENTS.map((sid, idx)=>{
+    const c = cases[(idx+2) % cases.length];
+    return { id:'HW-'+sid, sid, raw:c.raw, reason:c.reason, status:c.status };
+  });
+}
+
+/* ---------- 가상 데이터: ③ 피드백 초안 ---------- */
+function seedFeedback(){
+  const items = [
+    { topic:'프로포절 개발 과제', draft:'전반적으로 사업 목표와 예산 계획의 연결이 논리적이며, 성과지표를 조금 더 구체적인 수치로 제시하면 좋겠습니다.' },
+    { topic:'사회복지기관 행정체계 조사', draft:'조직도와 의사결정 구조 분석은 충실하나, 재원 조달 방식에 대한 비교 설명을 보완하면 좋겠습니다.' },
+    { topic:'예산·재무관리 사례분석', draft:'예산 편성 원칙 적용은 정확하나, 실제 기관 사례와의 비교 근거를 조금 더 보강하면 좋겠습니다.' },
+    { topic:'인사관리 방안 발표', draft:'직무분석과 채용 절차 설명은 명확하나, 직원 소진(burnout) 대응 방안을 추가하면 완성도가 높아지겠습니다.' },
+  ];
+  return STUDENTS.map((sid, idx)=>{
+    const statusCycle = ['새 항목','검토 중','검토 중','승인됨','완료'];
+    const status = statusCycle[idx % statusCycle.length];
+    const it = items[idx % items.length];
+    return {
+      id:'FB-'+sid, sid,
+      topic: it.topic,
+      raw: `AI 초안: "${it.draft}"`,
+      reason: status==='새 항목' ? '평가 메모 입력됨, 초안 미생성' : '초안 자동 생성됨, 교수 검토/톤 조정 필요',
+      status
+    };
+  });
+}
+
+/* ---------- 가상 데이터: ④ 행정 To-Do ---------- */
+function seedAdmin(){
+  return [
+    {id:'ADM-01', item:'중간 성적 입력 마감 안내', target:'전체(12명)', raw:'학사시스템 알림: 마감 D-3', reason:'마감 임박 자동 태깅(높음)', status:'새 항목'},
+    {id:'ADM-02', item:'프로포절 개발 과제 조 편성 확정', target:'전체(12명)', raw:'편성안 자동 생성', reason:'편성 로직 적용됨, 교수 확인 필요', status:'새 항목'},
+    {id:'ADM-03', item:'사회복지사 1급 시험 대비 특강 자료 배부 승인', target:'전체(12명)', raw:'자료실 업로드 초안 대기 (행정론 기출 요약본)', reason:'배부 자료 초안 완성, 최종 승인 대기', status:'검토 중'},
+    {id:'ADM-04', item:'학과 회의 결과 반영', target:'-', raw:'학과 공지 수신 (2026-08-18)', reason:'회의 결과 검토 완료, 처리 대기', status:'승인됨'},
+    {id:'ADM-05', item:'사회복지기관 행정체계 조사 발표 일정 확정', target:'A01~A04', raw:'발표 순서 확정본 저장됨', reason:'일정 확정 및 공지 완료', status:'완료'},
+    {id:'ADM-06', item:'사회복지사 1급 시험 모의고사 응시 현황 점검', target:'A02, A05, A09', raw:'학과 공지: 모의고사 미응시자 3명', reason:'응시 현황 자동 대조 결과', status:'검토 중'},
+    {id:'ADM-07', item:'결석 누적 4회 이상 학생 사전 안내 검토', target:'A06, A12', raw:'출결 누적 집계: A06 4회, A12 5회', reason:'F학점 기준 초과/근접 자동 감지, 개별 안내 필요 여부 판단 대기', status:'새 항목'},
+  ];
+}
+
+/* ---------- 상태(메모리) ---------- */
+let data1 = seedAttendance();
+let data2 = seedHomework();
+let data3 = seedFeedback();
+let data4 = seedAdmin();
+let history = [];
+const risk = { fail:4, warn:3 };
+
+const filters = { status:'all', student:'all', keyword:'' };
+
+/* ---------- 렌더링 헬퍼 ---------- */
+function badge(status){
+  const cls = {'새 항목':'new','검토 중':'review','승인됨':'approved','완료':'done'}[status];
+  return `<span class="badge ${cls}">${status}</span>`;
+}
+
+function riskBadgeFor(sid){
+  const n = ABSENCE_COUNT[sid] ?? 0;
+  if(n >= risk.fail) return `<span class="risk-badge fail">F 처리 대상</span>`;
+  if(n >= risk.warn) return `<span class="risk-badge warn">경고</span>`;
+  return `<span class="risk-badge safe">안전</span>`;
+}
+
+function rowRiskClass(sid){
+  const n = ABSENCE_COUNT[sid] ?? 0;
+  if(n >= risk.fail) return 'row-fail';
+  if(n >= risk.warn) return 'row-risk';
+  return '';
+}
+
+function matchesFilter(row, extraLabel){
+  if(filters.status!=='all' && row.status!==filters.status) return false;
+  if(filters.student!=='all' && row.sid && row.sid!==filters.student) return false;
+  if(filters.keyword){
+    const hay = (row.raw+' '+row.reason+' '+(extraLabel||'')).toLowerCase();
+    if(!hay.includes(filters.keyword.toLowerCase())) return false;
+  }
+  return true;
+}
+
+function approveButtonHTML(list, row){
+  if(row.status==='완료'){
+    return `<span class="lockmsg">처리 완료</span>`;
+  }
+  if(row.status==='새 항목'){
+    return `<div class="actions">
+      <button class="btn btn-approve" data-list="${list}" data-id="${row.id}" data-act="review">검토 시작</button>
+    </div>`;
+  }
+  if(row.status==='검토 중'){
+    return `<div class="actions">
+      <button class="btn btn-approve" data-list="${list}" data-id="${row.id}" data-act="approve">승인</button>
+      <button class="btn btn-reject" data-list="${list}" data-id="${row.id}" data-act="reject">반려</button>
+    </div>`;
+  }
+  if(row.status==='승인됨'){
+    return `<div class="actions">
+      <button class="btn btn-approve" data-list="${list}" data-id="${row.id}" data-act="complete">완료 처리</button>
+    </div>
+    <div class="lockmsg">※ 실제 반영(성적/발송/삭제)은 화면 밖에서 수동 진행</div>`;
+  }
+  return '';
+}
+
+/* ---------- 섹션별 렌더 ---------- */
+function renderTable1(){ // 출석 (with F-risk column)
+  const tbody = document.getElementById('tbl1');
+  const rows = data1.filter(r=>matchesFilter(r,'출석'));
+  document.getElementById('cnt1').textContent = rows.length;
+  if(rows.length===0){ tbody.innerHTML = `<tr><td colspan="6" class="empty">조건에 맞는 항목이 없습니다</td></tr>`; return; }
+  tbody.innerHTML = rows.map(r=>{
+    const n = ABSENCE_COUNT[r.sid] ?? 0;
+    return `
+    <tr class="${r.status==='완료'?'row-done':''} ${rowRiskClass(r.sid)}">
+      <td><span class="sid">${r.sid}</span></td>
+      <td><div class="raw">${r.raw}</div><div class="reason">${r.reason}</div></td>
+      <td><span class="abscount">${n}</span> / ${TOTAL_WEEKS}주 ${riskBadgeFor(r.sid)}</td>
+      <td>${badge(r.status)}</td>
+      <td class="next">${NEXT_ACTION[r.status]}</td>
+      <td>${approveButtonHTML('data1', r)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderTable2(){ // 과제 제출
+  const tbody = document.getElementById('tbl2');
+  const rows = data2.filter(r=>matchesFilter(r,'과제 제출'));
+  document.getElementById('cnt2').textContent = rows.length;
+  if(rows.length===0){ tbody.innerHTML = `<tr><td colspan="5" class="empty">조건에 맞는 항목이 없습니다</td></tr>`; return; }
+  tbody.innerHTML = rows.map(r=>`
+    <tr class="${r.status==='완료'?'row-done':''}">
+      <td><span class="sid">${r.sid}</span></td>
+      <td><div class="raw">${r.raw}</div><div class="reason">${r.reason}</div></td>
+      <td>${badge(r.status)}</td>
+      <td class="next">${NEXT_ACTION[r.status]}</td>
+      <td>${approveButtonHTML('data2', r)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderTable3(){ // 피드백
+  const tbody = document.getElementById('tbl3');
+  const rows = data3.filter(r=>matchesFilter(r, r.topic));
+  document.getElementById('cnt3').textContent = rows.length;
+  if(rows.length===0){ tbody.innerHTML = `<tr><td colspan="6" class="empty">조건에 맞는 항목이 없습니다</td></tr>`; return; }
+  tbody.innerHTML = rows.map(r=>`
+    <tr class="${r.status==='완료'?'row-done':''}">
+      <td><span class="sid">${r.sid}</span></td>
+      <td>${r.topic}</td>
+      <td><div class="raw">${r.raw}</div><div class="reason">${r.reason}</div></td>
+      <td>${badge(r.status)}</td>
+      <td class="next">${NEXT_ACTION[r.status]}</td>
+      <td>${approveButtonHTML('data3', r)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderTable4(){ // 행정 To-Do
+  const tbody = document.getElementById('tbl4');
+  const rows = data4.filter(r=>matchesFilter(r, r.item+' '+r.target));
+  document.getElementById('cnt4').textContent = rows.length;
+  if(rows.length===0){ tbody.innerHTML = `<tr><td colspan="6" class="empty">조건에 맞는 항목이 없습니다</td></tr>`; return; }
+  tbody.innerHTML = rows.map(r=>`
+    <tr class="${r.status==='완료'?'row-done':''}">
+      <td>${r.item}</td>
+      <td>${r.target}</td>
+      <td><div class="raw">${r.raw}</div><div class="reason">${r.reason}</div></td>
+      <td>${badge(r.status)}</td>
+      <td class="next">${NEXT_ACTION[r.status]}</td>
+      <td>${approveButtonHTML('data4', r)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderStats(){
+  const attNeed = data1.filter(r=>r.status!=='완료').length;
+  const hwMissing = data2.filter(r=>r.status==='새 항목'||r.status==='검토 중').length;
+  const fbReview = data3.filter(r=>r.status==='새 항목'||r.status==='검토 중').length;
+  const riskCount = STUDENTS.filter(sid=>(ABSENCE_COUNT[sid]??0) >= risk.warn).length;
+  const cards = [
+    {num:attNeed, label:'출석 확인 대상 수'},
+    {num:hwMissing, label:'과제 미제출/이상 건'},
+    {num:fbReview, label:'검토할 피드백 수'},
+    {num:riskCount, label:'F학점 경고 대상 학생', warn:riskCount>0},
+  ];
+  document.getElementById('statCards').innerHTML = cards.map(c=>`
+    <div class="stat ${c.num===0?'ok':''} ${c.warn?'warn':''}"><div class="num">${c.num}</div><div class="label">${c.label}</div></div>
+  `).join('');
+}
+
+function renderAll(){
+  renderStats();
+  renderTable1();
+  renderTable2();
+  renderTable3();
+  renderTable4();
+}
+
+/* ---------- 학생 필터 옵션 채우기 ---------- */
+function initStudentFilter(){
+  const sel = document.getElementById('filterStudent');
+  STUDENTS.forEach(sid=>{
+    const opt = document.createElement('option');
+    opt.value = sid; opt.textContent = sid;
+    sel.appendChild(opt);
+  });
+}
+
+/* ---------- 상태 전환 로직 ---------- */
+function getList(name){
+  return name==='data1'?data1 : name==='data2'?data2 : name==='data3'?data3 : data4;
+}
+function findRow(list, id){ return getList(list).find(r=>r.id===id); }
+
+function applyAction(listName, id, act){
+  const row = findRow(listName, id);
+  if(!row) return;
+  const prevStatus = row.status;
+  let newStatus = prevStatus;
+  let msg = '';
+  const label = row.sid || row.item || row.id;
+
+  if(act==='review'){ newStatus='검토 중'; msg=`${label} → 검토 중으로 이동`; }
+  else if(act==='approve'){ newStatus='승인됨'; msg=`${label} → 승인됨으로 이동 (실제 실행 없음)`; }
+  else if(act==='reject'){ newStatus='새 항목'; msg=`${label} → 반려, 새 항목으로 되돌림`; }
+  else if(act==='complete'){ newStatus='완료'; msg=`${label} → 완료 처리`; }
+
+  row.status = newStatus;
+  history.push({listName, id, prevStatus});
+  renderAll();
+  showToast(msg);
+}
+
+function undoLast(){
+  const last = history.pop();
+  if(!last) return;
+  const row = findRow(last.listName, last.id);
+  if(row){ row.status = last.prevStatus; }
+  renderAll();
+  updateUndoButton();
+  showToast('마지막 작업을 취소했습니다');
+}
+function updateUndoButton(){ document.getElementById('undoBtn').disabled = history.length===0; }
+
+/* ---------- 토스트 ---------- */
+let toastTimer = null;
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  updateUndoButton();
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ toast.classList.remove('show'); }, 4000);
+}
+
+/* ---------- 이벤트 바인딩 ---------- */
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-act]');
+  if(btn){ applyAction(btn.dataset.list, btn.dataset.id, btn.dataset.act); }
+});
+document.getElementById('toastUndo').addEventListener('click', undoLast);
+document.getElementById('undoBtn').addEventListener('click', undoLast);
+
+document.getElementById('filterStatus').addEventListener('change', (e)=>{ filters.status = e.target.value; renderAll(); });
+document.getElementById('filterStudent').addEventListener('change', (e)=>{ filters.student = e.target.value; renderAll(); });
+document.getElementById('filterKeyword').addEventListener('input', (e)=>{ filters.keyword = e.target.value; renderAll(); });
+document.getElementById('resetFilterBtn').addEventListener('click', ()=>{
+  filters.status='all'; filters.student='all'; filters.keyword='';
+  document.getElementById('filterStatus').value='all';
+  document.getElementById('filterStudent').value='all';
+  document.getElementById('filterKeyword').value='';
+  renderAll();
+  showToast('필터를 초기화했습니다');
+});
+
+document.getElementById('riskThreshold').addEventListener('input', (e)=>{
+  const v = parseInt(e.target.value,10);
+  risk.fail = (!isNaN(v) && v>0) ? v : 4;
+  renderAll();
+});
+document.getElementById('warnThreshold').addEventListener('input', (e)=>{
+  const v = parseInt(e.target.value,10);
+  risk.warn = (!isNaN(v) && v>0) ? v : 3;
+  renderAll();
+});
+
+/* ---------- 초기화 ---------- */
+initStudentFilter();
+renderAll();
+</script>
+</body>
+</html>
