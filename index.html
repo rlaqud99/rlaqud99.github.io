@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>사회복지행정론 | 연성대학교 사회복지경영과</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23182437'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23C97A5C' font-family='Georgia,serif'%3E行%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
 <style>
   :root{
     --paper:#ECE8DE; --ink:#22262B; --navy:#26364F; --navy-deep:#182437;
@@ -14,8 +13,8 @@
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
-  body{ background:var(--paper); color:var(--ink); font-family:'Noto Sans KR', sans-serif; line-height:1.7; font-weight:400; }
-  h1,h2,h3,.serif{ font-family:'Noto Serif KR', serif; }
+  body{ background:var(--paper); color:var(--ink); font-family:'Pretendard Variable', 'Pretendard', sans-serif; line-height:1.7; font-weight:400; }
+  h1,h2,h3,.serif{ font-family:'Pretendard Variable', 'Pretendard', sans-serif; font-weight:800; letter-spacing:-0.02em; }
   a{ color:inherit; }
   a:focus-visible, button:focus-visible{ outline:2px solid var(--seal); outline-offset:2px; }
   .doc-top{ background:var(--navy-deep); color:#EDE7D8; padding:14px 6vw; display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; letter-spacing:0.04em; border-bottom:3px double var(--gold); }
@@ -30,27 +29,29 @@
   .hero-meta div:last-child{border-right:none;}
   .hero-meta .label{ font-size:0.7rem; letter-spacing:0.1em; color:#9C947C; text-transform:uppercase; margin-bottom:6px;}
   .hero-meta .val{ font-size:1.02rem; font-weight:500; color:#F3EFE3;}
-  nav.tabs{ position:sticky; top:0; z-index:40; background:var(--card); border-bottom:1px solid var(--line); display:flex; gap:2px; padding:0 6vw; overflow-x:auto; }
-  nav.tabs button{ background:none; border:none; cursor:pointer; font-family:'Noto Sans KR',sans-serif; font-size:0.92rem; font-weight:500; color:#6b6656; padding:16px 18px; white-space:nowrap; border-bottom:3px solid transparent; transition:color .15s ease, border-color .15s ease; }
-  nav.tabs button:hover{ color:var(--navy); }
+  nav.tabs{ position:sticky; top:0; z-index:40; background:var(--card); border-bottom:1px solid var(--line); display:flex; gap:2px; padding:0 6vw; overflow-x:auto; scroll-behavior:smooth; -ms-overflow-style:none; scrollbar-width:none; }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  nav.tabs button{ background:none; border:none; cursor:pointer; font-family:'Pretendard Variable', 'Pretendard', sans-serif; font-size:0.92rem; font-weight:500; color:#6b6656; padding:16px 18px; white-space:nowrap; border-bottom:3px solid transparent; transition:color .15s ease, border-color .15s ease, background .15s ease; flex-shrink:0; }
+  nav.tabs button:hover{ color:var(--navy); background:rgba(38,54,79,0.05); }
   nav.tabs button.active{ color:var(--seal); border-bottom-color:var(--seal); font-weight:700;}
+  @media (max-width:720px){ nav.tabs{ padding:0 4vw; } nav.tabs button{ padding:14px 14px; font-size:0.86rem; } }
   main{ max-width:980px; margin:0 auto; padding:0 6vw; }
   section{ padding:64px 0; border-bottom:1px solid var(--line); }
   section:last-of-type{ border-bottom:none; }
   .sec-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:34px; }
-  .sec-num{ font-family:'Noto Serif KR',serif; color:var(--seal); font-weight:700; font-size:0.95rem; }
+  .sec-num{ font-family:'Pretendard Variable', 'Pretendard', sans-serif; color:var(--seal); font-weight:700; font-size:0.95rem; }
   .sec-head h2{ font-size:1.7rem; font-weight:700; color:var(--navy-deep); }
   .sec-desc{ color:#5b5646; font-size:0.94rem; margin:-20px 0 30px; max-width:60ch;}
   .card{ background:var(--card); border:1px solid var(--line); border-radius:4px; padding:26px 28px; }
   .card h3{ font-size:1rem; color:var(--navy); margin-bottom:12px; font-weight:700;}
   .card p{ font-size:0.92rem; color:#463f31; }
-  .contact-list{ list-style:none; margin-top:14px; }
-  .contact-list li{ display:flex; justify-content:space-between; padding:10px 0; border-top:1px dashed var(--line); font-size:0.9rem; }
-  .contact-list li:first-child{border-top:none;}
-  .contact-list .k{ color:#8a8368; }
-  .contact-list .v{ font-weight:600; color:var(--ink); }
+  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+  .contact-cell{ display:flex; flex-direction:column; gap:4px; padding:12px 16px; background:#fff; border:1px solid var(--line); border-radius:10px; }
+  .contact-cell .k{ font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:#8a8368; }
+  .contact-cell .v{ font-size:0.92rem; font-weight:700; color:var(--ink); }
+  @media (max-width:560px){ .contact-grid{ grid-template-columns:1fr; } }
   .profile-card{ display:flex; gap:24px; align-items:flex-start; }
-  .profile-photo{ width:108px; height:140px; border-radius:6px; flex-shrink:0; background:linear-gradient(145deg, var(--navy), var(--navy-deep)); color:#F3EFE3; display:flex; align-items:center; justify-content:center; font-family:'Noto Serif KR',serif; font-weight:700; font-size:1.7rem; overflow:hidden; border:1px solid var(--line); }
+  .profile-photo{ width:108px; height:140px; border-radius:6px; flex-shrink:0; background:linear-gradient(145deg, var(--navy), var(--navy-deep)); color:#F3EFE3; display:flex; align-items:center; justify-content:center; font-family:'Pretendard Variable', 'Pretendard', sans-serif; font-weight:700; font-size:1.7rem; overflow:hidden; border:1px solid var(--line); }
   .profile-photo img{ width:100%; height:100%; object-fit:cover; object-position:center 15%; }
   .profile-body h4{ font-size:1.02rem; font-weight:700; color:var(--ink); margin-bottom:2px; }
   .profile-body .role{ font-size:0.8rem; color:#8a8368; margin-bottom:10px; }
@@ -62,14 +63,45 @@
   .week-list{ display:flex; flex-direction:column; }
   .week{ display:grid; grid-template-columns:88px 1fr auto; gap:22px; align-items:center; padding:18px 0; border-top:1px solid var(--line); }
   .week:last-child{ border-bottom:1px solid var(--line); }
-  .week-no{ display:flex; align-items:baseline; gap:4px; font-family:'Noto Serif KR',serif; color:var(--line); transition:color .15s ease; }
+  .week-no{ display:flex; align-items:baseline; gap:4px; font-family:'Pretendard Variable', 'Pretendard', sans-serif; color:var(--line); transition:color .15s ease; }
   .week-no .num{ font-weight:900; font-size:1.5rem; }
   .week-no .unit{ font-weight:700; font-size:0.8rem; letter-spacing:0.02em; }
   .week:hover .week-no{ color:var(--seal-soft); }
   .week-title{ font-size:1rem; font-weight:600; color:var(--ink); }
   .week-title .tag{ display:inline-block; font-size:0.68rem; font-weight:700; letter-spacing:0.05em; color:#fff; background:var(--seal); border-radius:20px; padding:2px 10px; margin-right:10px; vertical-align:middle; }
-  .week-sub{ font-size:0.82rem; color:#8a8368; margin-top:4px;}
+  .week-sub{ font-size:0.82rem; color:#8a8368; margin-top:4px; line-height:1.55;}
+  .week.current-week{ background:linear-gradient(90deg, rgba(183,146,63,0.09), transparent 60%); border-radius:8px; }
+  .week.current-week .week-no{ color:var(--seal); }
+  .week-now-badge{ display:inline-block; font-size:0.66rem; font-weight:800; letter-spacing:0.04em; color:#fff; background:var(--gold); border-radius:20px; padding:2px 10px; margin-left:8px; vertical-align:middle; }
   .notice-toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+
+  /* 핵심 주제 박스 */
+  .topic-box{ margin-top:26px; padding-top:22px; border-top:1px dashed var(--line); }
+  .topic-box-label{ font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:#8a8368; font-weight:700; margin-bottom:14px; }
+  .topic-cards{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  .topic-card{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:18px 20px; }
+  .topic-card h4{ margin:0 0 8px; font-size:0.98rem; font-weight:700; color:var(--navy-deep); font-family:'Pretendard Variable', 'Pretendard', sans-serif; }
+  .topic-card p{ margin:0; font-size:0.84rem; color:#6b6656; line-height:1.6; }
+  @media (max-width:720px){ .topic-cards{ grid-template-columns:1fr; } }
+
+  /* 5단계 강의 진행 흐름 */
+  .stage-card{ margin-top:22px; }
+  .stage-flow{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; position:relative; }
+  .stage-flow::before{ content:""; position:absolute; top:23px; left:6%; right:6%; height:2px; background:repeating-linear-gradient(90deg, var(--line) 0 8px, transparent 8px 14px); z-index:0; }
+  .stage-step{ position:relative; z-index:1; flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; }
+  .stage-circle{ width:46px; height:46px; border-radius:50%; background:var(--navy-deep); color:#F3EFE3; display:flex; align-items:center; justify-content:center; font-family:'Pretendard Variable', 'Pretendard', sans-serif; font-weight:700; font-size:1.15rem; box-shadow:0 4px 12px rgba(24,36,55,.18); }
+  .stage-step:nth-child(odd) .stage-circle{ background:var(--seal); }
+  .stage-label{ font-size:0.88rem; font-weight:700; color:var(--ink); line-height:1.35; }
+  .stage-weeks{ font-size:0.74rem; color:#8a8368; font-family:'Pretendard Variable', 'Pretendard', sans-serif; }
+  @media (max-width:720px){
+    .stage-flow{ flex-direction:column; align-items:stretch; gap:20px; }
+    .stage-flow::before{ top:0; bottom:0; left:23px; right:auto; width:2px; height:auto; background:repeating-linear-gradient(180deg, var(--line) 0 8px, transparent 8px 14px); }
+    .stage-step{ flex-direction:row; text-align:left; justify-content:flex-start; }
+    .stage-circle{ flex-shrink:0; }
+  }
+
+  /* 공지 NEW 배지 */
+  .notice-badge.new-flag{ background:var(--gold); color:#fff; margin-left:6px; }
   .notice-item{ display:flex; gap:16px; padding:18px 20px; background:var(--card); border:1px solid var(--line); border-radius:4px; margin-bottom:10px; align-items:flex-start; }
   .notice-badge{ font-size:0.7rem; font-weight:700; padding:3px 9px; border-radius:3px; white-space:nowrap; margin-top:2px; }
   .notice-badge.notice{ background:var(--navy); color:#F3EFE3;}
@@ -87,7 +119,7 @@
   [data-reveal]{ opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease; }
   [data-reveal].in{ opacity:1; transform:none; }
   .tools-fab{ position:fixed; right:24px; bottom:24px; z-index:999; background:var(--seal); color:#fff;
-    text-decoration:none; font-family:'Noto Sans KR',sans-serif; font-weight:700; font-size:0.92rem;
+    text-decoration:none; font-family:'Pretendard Variable', 'Pretendard', sans-serif; font-weight:700; font-size:0.92rem;
     padding:14px 22px; border-radius:999px; box-shadow:0 10px 24px rgba(168,71,43,.35);
     display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, background .15s ease; }
   .tools-fab:hover{ transform:translateY(-3px); background:var(--seal-soft); }
@@ -129,6 +161,60 @@
     <div class="card">
       <h3>강의 소개</h3>
       <p>"행정"이라고 하면 딱딱한 서류 업무를 떠올리기 쉽지만, 사실은 사회복지조직이 더 좋은 서비스를 만들어내기 위해 사람과 자원을 잘 꾸려가는 이야기예요. 이 수업에서는 조직은 어떻게 움직이는지, 좋은 리더는 어떤 모습인지부터 시작해서, 사람을 뽑고 키우는 법, 예산을 짜는 법, 프로그램을 기획하고 평가하는 법까지 차근차근 함께 살펴봅니다. 현장에 나갔을 때 든든한 기본기가 될 내용들입니다.</p>
+
+      <div class="topic-box">
+        <div class="topic-box-label">핵심 주제</div>
+        <div class="topic-cards">
+          <div class="topic-card">
+            <h4>조직이론</h4>
+            <p>사회복지조직이 어떤 원리로 움직이는지 고전 이론부터 인간관계 이론까지 비교하며 이해합니다. 조직의 구조와 의사결정 과정을 실제 기관 사례에 빗대어 살펴봅니다. 이후 배울 조직관리·리더십 내용의 기초가 되는 파트입니다.</p>
+          </div>
+          <div class="topic-card">
+            <h4>리더십 및 동기이론</h4>
+            <p>좋은 리더는 어떤 모습일지 다양한 리더십 이론으로 함께 생각해봅니다. 구성원의 동기를 이끌어내는 이론들을 통해 사람을 움직이는 원리도 짚어봅니다. 현장에서 만난 리더의 모습과 견주어보는 시간도 갖습니다.</p>
+          </div>
+          <div class="topic-card">
+            <h4>재정 및 마케팅</h4>
+            <p>예산을 세우고 관리하는 재정관리의 기본 원칙을 익힙니다. 기관과 프로그램을 알리고 후원을 이끌어내는 마케팅 전략도 함께 다룹니다. 실제 기관의 예산 편성과 홍보·모금 사례를 통해 감각을 길러봅니다.</p>
+          </div>
+          <div class="topic-card">
+            <h4>프로그램 개발과 평가</h4>
+            <p>현장의 필요를 찾아 프로그램을 기획하고 성과지표를 세우는 법을 익힙니다. 운영 정보를 기록·관리하고 성과를 평가하는 전 과정을 다룹니다. 프로포절 개발 과제를 통해 배운 내용을 직접 적용해봅니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card stage-card">
+      <h3>강의 진행 5단계</h3>
+      <p class="sec-desc" style="margin:0 0 22px;">15주 커리큘럼을 다섯 단계로 묶어보면 이렇게 이어집니다.</p>
+      <div class="stage-flow">
+        <div class="stage-step">
+          <div class="stage-circle">1</div>
+          <div class="stage-label">행정의 기초</div>
+          <div class="stage-weeks">1~4주</div>
+        </div>
+        <div class="stage-step">
+          <div class="stage-circle">2</div>
+          <div class="stage-label">조직 운영의 원리</div>
+          <div class="stage-weeks">5~8주</div>
+        </div>
+        <div class="stage-step">
+          <div class="stage-circle">3</div>
+          <div class="stage-label">리더십과 사람</div>
+          <div class="stage-weeks">9~10주</div>
+        </div>
+        <div class="stage-step">
+          <div class="stage-circle">4</div>
+          <div class="stage-label">자원과 확산</div>
+          <div class="stage-weeks">11~12주</div>
+        </div>
+        <div class="stage-step">
+          <div class="stage-circle">5</div>
+          <div class="stage-label">프로그램과 마무리</div>
+          <div class="stage-weeks">13~15주</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -143,12 +229,12 @@
           <h4>김병년 교수</h4>
           <div class="role">연성대학교 사회복지경영과 · 사회복지학 박사(사회복지방법론 전공)</div>
           <p>사회복지행정, 조직관리, 사회복지조사 분야를 연구하며 「청소년복지론」, 「사회복지조사론」, 「사회복지실천기술론」 등을 집필했습니다. 한국다문화복지학회 이사, 한국 시·도 사회서비스원 경영평가 평가위원 등으로 활동하며 이론과 현장을 잇는 강의를 지향합니다.</p>
-          <ul class="contact-list">
-            <li><span class="k">전화</span><span class="v">031-441-1036</span></li>
-            <li><span class="k">이메일</span><span class="v"><a href="mailto:byoung99@yeonsung.ac.kr" style="color:inherit;">byoung99@yeonsung.ac.kr</a></span></li>
-            <li><span class="k">연구실</span><span class="v">연곡문화센터 402호</span></li>
-            <li><span class="k">강의실</span><span class="v">연곡문화센터 408호</span></li>
-          </ul>
+          <div class="contact-grid">
+            <div class="contact-cell"><span class="k">전화</span><span class="v">031-441-1036</span></div>
+            <div class="contact-cell"><span class="k">이메일</span><span class="v"><a href="mailto:byoung99@yeonsung.ac.kr" style="color:inherit;">byoung99@yeonsung.ac.kr</a></span></div>
+            <div class="contact-cell"><span class="k">연구실</span><span class="v">연곡문화센터 402호</span></div>
+            <div class="contact-cell"><span class="k">강의실</span><span class="v">연곡문화센터 408호</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -162,7 +248,7 @@
       <div class="week-no"><span class="num">1</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">오리엔테이션</div>
-        <div class="week-sub">한 학기 동안 무엇을 배우고 어떻게 수업이 진행되는지 함께 그려봅니다.</div>
+        <div class="week-sub">한 학기 동안 무엇을 배우고 어떻게 수업이 진행되는지 함께 그려봅니다. 강의계획서와 평가 방식, 앞으로 사용할 수업 도구까지 첫 시간에 전체적으로 안내합니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -170,7 +256,7 @@
       <div class="week-no"><span class="num">2</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">사회복지행정의 개념</div>
-        <div class="week-sub">행정이 왜 필요한지, 사회복지 현장에서 어떤 의미를 갖는지 기초부터 짚어봅니다.</div>
+        <div class="week-sub">행정이 왜 필요한지, 사회복지 현장에서 어떤 의미를 갖는지 기초부터 짚어봅니다. 일반 행정과 사회복지행정이 어떻게 다른지도 함께 비교해봅니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -178,7 +264,7 @@
       <div class="week-no"><span class="num">3</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">사회복지행정의 역사</div>
-        <div class="week-sub">미국과 한국의 사례를 통해 지금의 행정 방식이 어떻게 만들어졌는지 살펴봅니다.</div>
+        <div class="week-sub">미국과 한국의 사례를 통해 지금의 행정 방식이 어떻게 만들어졌는지 살펴봅니다. 시대별 주요 흐름을 짚으며 앞으로 배울 이론들의 배경을 이해합니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -186,7 +272,7 @@
       <div class="week-no"><span class="num">4</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">사회복지서비스 전달체계</div>
-        <div class="week-sub">서비스가 필요한 사람에게 실제로 어떻게 전달되는지, 그 구조와 원칙을 알아봅니다.</div>
+        <div class="week-sub">서비스가 필요한 사람에게 실제로 어떻게 전달되는지, 그 구조와 원칙을 알아봅니다. 공공과 민간이 역할을 나누어 협력하는 방식도 함께 살펴봅니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -194,7 +280,7 @@
       <div class="week-no"><span class="num">5</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">조직이론</div>
-        <div class="week-sub">조직이 어떤 원리로 움직이는지, 고전 이론부터 인간관계 이론까지 비교하며 이해합니다.</div>
+        <div class="week-sub">조직이 어떤 원리로 움직이는지, 고전 이론부터 인간관계 이론까지 비교하며 이해합니다. 사회복지조직에 실제로 적용된 사례를 통해 이론을 체감해봅니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -202,7 +288,7 @@
       <div class="week-no"><span class="num">6</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">사회복지조직의 기획과 의사결정</div>
-        <div class="week-sub">계획을 세우고 결정을 내리는 과정을 실제 사례에 빗대어 연습해봅니다.</div>
+        <div class="week-sub">계획을 세우고 결정을 내리는 과정을 실제 사례에 빗대어 연습해봅니다. 여러 대안 중 하나를 고르는 의사결정 기법도 함께 다룹니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -210,7 +296,7 @@
       <div class="week-no"><span class="num">7</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">사회복지조직관리</div>
-        <div class="week-sub">조직을 원활하게 운영하기 위한 관리 원리와 실무 노하우를 정리합니다.</div>
+        <div class="week-sub">조직을 원활하게 운영하기 위한 관리 원리와 실무 노하우를 정리합니다. 갈등 조정, 의사소통 등 조직 운영에서 자주 부딪히는 문제도 함께 다룹니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -218,7 +304,7 @@
       <div class="week-no"><span class="num">8</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title"><span class="tag">시험</span>중간고사</div>
-        <div class="week-sub">1~7주차 동안 배운 내용을 스스로 점검해보는 시간입니다.</div>
+        <div class="week-sub">1~7주차 동안 배운 내용을 스스로 점검해보는 시간입니다. 개념 이해도 확인 위주로 출제되니 부담 없이 준비해오시면 됩니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -226,7 +312,7 @@
       <div class="week-no"><span class="num">9</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">리더십 이론</div>
-        <div class="week-sub">좋은 리더는 어떤 모습일지, 다양한 리더십 이론으로 생각해봅니다.</div>
+        <div class="week-sub">좋은 리더는 어떤 모습일지, 다양한 리더십 이론으로 생각해봅니다. 내가 실습·근무 현장에서 만난 리더의 모습과 견주어 생각해보는 시간도 갖습니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -234,7 +320,7 @@
       <div class="week-no"><span class="num">10</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">인적자원관리</div>
-        <div class="week-sub">사람을 채용하고, 평가하고, 성장시키는 인사관리의 전 과정을 다룹니다.</div>
+        <div class="week-sub">사람을 채용하고, 평가하고, 성장시키는 인사관리의 전 과정을 다룹니다. 직무분석부터 소진(burnout) 예방까지 실무에서 바로 참고할 내용으로 구성했습니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -242,7 +328,7 @@
       <div class="week-no"><span class="num">11</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">사회복지재정관리</div>
-        <div class="week-sub">예산을 세우고 관리하는 법을 통해 재정 감각을 길러봅니다.</div>
+        <div class="week-sub">예산을 세우고 관리하는 법을 통해 재정 감각을 길러봅니다. 예산 편성 원칙과 실제 기관의 재원 조달 방식을 함께 비교해봅니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -250,7 +336,7 @@
       <div class="week-no"><span class="num">12</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">사회복지 마케팅 관리</div>
-        <div class="week-sub">기관과 프로그램을 알리고 후원을 이끌어내는 마케팅 전략을 배웁니다.</div>
+        <div class="week-sub">기관과 프로그램을 알리고 후원을 이끌어내는 마케팅 전략을 배웁니다. 실제 기관 홍보·모금 사례를 함께 분석해봅니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -258,7 +344,7 @@
       <div class="week-no"><span class="num">13</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">프로그램 개발과 평가</div>
-        <div class="week-sub">필요를 찾아 프로그램을 기획하고, 성과를 평가하는 방법을 익힙니다.</div>
+        <div class="week-sub">필요를 찾아 프로그램을 기획하고, 성과를 평가하는 방법을 익힙니다. 이번 주 프로포절 개발 과제의 목표 설정과 성과지표 잡는 법을 함께 연습합니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -266,7 +352,7 @@
       <div class="week-no"><span class="num">14</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title">프로그램 정보관리</div>
-        <div class="week-sub">프로그램 운영 정보를 체계적으로 기록하고 활용하는 방법을 살펴봅니다.</div>
+        <div class="week-sub">프로그램 운영 정보를 체계적으로 기록하고 활용하는 방법을 살펴봅니다. 사회복지기관 행정체계 조사 발표를 준비하며 지금까지 배운 내용을 정리합니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div>
@@ -274,7 +360,7 @@
       <div class="week-no"><span class="num">15</span><span class="unit">주차</span></div>
       <div>
         <div class="week-title"><span class="tag">시험</span>기말고사</div>
-        <div class="week-sub">한 학기 동안의 배움을 마무리하고 정리하는 시간입니다.</div>
+        <div class="week-sub">한 학기 동안의 배움을 마무리하고 정리하는 시간입니다. 사회복지사 1급 시험 대비 내용을 포함해 전체 범위를 다시 한번 훑어봅니다.</div>
       </div>
       <div class="week-sub-time"></div>
     </div></div>
@@ -321,7 +407,7 @@
       <p class="sec-desc" style="margin:0;">학기 중 게시되는 공지사항과 과제 안내가 이곳에 순서대로 쌓입니다.</p>
     </div>
     <div id="noticeArea">
-      <div class="notice-item">
+      <div class="notice-item" data-date="2026-08-20">
         <span class="notice-badge notice">공지</span>
         <div class="notice-body">
           <div class="title">2026학년도 2학기 사회복지행정론, 반갑게 시작합니다</div>
@@ -352,8 +438,54 @@
   tabButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       document.getElementById(btn.dataset.target).scrollIntoView({behavior:'smooth', block:'start'});
+      btn.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
     });
   });
+
+  /* ---------- 이번 주차 자동 표시 ---------- */
+  // 학기 1주차 월요일 날짜를 여기서 조정하세요.
+  const SEMESTER_START = new Date('2026-09-01');
+  const TOTAL_WEEKS = 15;
+  (function highlightCurrentWeek(){
+    const today = new Date();
+    const msPerWeek = 7*24*60*60*1000;
+    const diff = today - SEMESTER_START;
+    let weekNum = Math.floor(diff / msPerWeek) + 1;
+    const weekEls = document.querySelectorAll('#curriculum .week');
+    if(weekNum < 1 || weekNum > TOTAL_WEEKS) return;
+    const target = weekEls[weekNum - 1];
+    if(target){
+      target.classList.add('current-week');
+      const titleEl = target.querySelector('.week-title');
+      if(titleEl){
+        const badge = document.createElement('span');
+        badge.className = 'week-now-badge';
+        badge.textContent = '이번 주';
+        titleEl.appendChild(badge);
+      }
+    }
+  })();
+
+  /* ---------- 공지 NEW 배지 ---------- */
+  (function flagNewNotices(){
+    const today = new Date();
+    const items = document.querySelectorAll('#noticeArea .notice-item');
+    items.forEach(item => {
+      const dateStr = item.dataset.date;
+      if(!dateStr) return;
+      const d = new Date(dateStr);
+      const daysAgo = (today - d) / (24*60*60*1000);
+      if(daysAgo >= 0 && daysAgo <= 7){
+        const badgeHost = item.querySelector('.notice-badge');
+        if(badgeHost){
+          const flag = document.createElement('span');
+          flag.className = 'notice-badge new-flag';
+          flag.textContent = 'NEW';
+          badgeHost.after(flag);
+        }
+      }
+    });
+  })();
   const sections = document.querySelectorAll('main section');
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if(e.isIntersecting){ tabButtons.forEach(b => b.classList.toggle('active', b.dataset.target === e.target.id)); } });
